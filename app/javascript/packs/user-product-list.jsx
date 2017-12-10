@@ -57,8 +57,8 @@ export class UserProductList extends React.Component {
 
     return (<div className="UserProductList">
       <ButtonGroup>
-        <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'primary' : 'light'}>Supermercado El Corte Ingles</Button>
-        <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'primary' : 'light'}>Supermercado Carrefour</Button>
+        <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Ingles</Button>
+        <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
       </ButtonGroup>
       <ul>
         { entries }
