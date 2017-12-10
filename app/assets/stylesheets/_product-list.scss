@@ -1,0 +1,130 @@
+.UserProductList {
+  width: 100%;
+  background: #FFFFFF;
+  padding: 24px;
+  font-family: 'Pangolin', cursive;
+
+  .no-results {
+    color: #99999C;
+    font-size: 24px;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-weight: 100;
+  }
+
+  & > ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  & > ul > li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li.entry {
+    margin-bottom: 10px
+  }
+
+  .entry-input {
+    border-color: transparent;
+    width: 100%;
+    display: block;
+    font-size: 28px;
+    padding: 4px 8px;
+    outline: none;
+    background: transparent;
+    border-bottom: 1px solid #E1E1FA;
+    border-radius: 0;
+    color: #4E4F50;
+
+    transition: border .33s ease-out;
+
+    &:focus {
+      background: transparent;
+      outline: none;
+      box-shadow: none;
+      border-color: transparent;
+      border-bottom: 1px solid #A1AFA9;
+    }
+
+  }
+
+  .product-offers {
+    padding: 12px;
+    border-top: 1px solid #99999C;
+    border-bottom: 1px solid #99999C;
+    width: 100%;
+    overflow-x: scroll;
+
+    .scroll-container {
+
+    }
+  }
+
+  .offer-item {
+    cursor: pointer;
+    border-radius: 0px;
+    box-shadow: 1px 0px 18px rgba(0, 0, 0, .06);
+    width: 180px;
+    height: 320px;
+    overflow: hidden;
+    float: left;
+    margin: 0px 2px;
+    padding: 5px;
+    border: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    font-family: "Helvetica Neue", 'Helvetica';
+    transition: border .23s ease-out;
+
+    &:hover {
+      border: 2px solid #facd03;
+      border-bottom: 2px solid #f1c401;
+    }
+
+    &:hover {
+      border: 2px solid #facd03;
+      border-bottom: 2px solid #f1c401;
+    }
+
+    &.active:hover {
+      border: 2px solid #28a745;
+      border-bottom: 2px solid #28a745;
+    }
+
+    &.active {
+      border: 2px solid #9bd8a7;
+      border-bottom: 2px solid #94d1a1;
+    }
+
+    img.thumb {
+      margin: 0 0px;
+      margin-bottom: 12px;
+      width: 100%;
+      display: block;
+    }
+
+    .offer-title {
+      margin: 0 7px;
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .offer-price {
+      font-weight: bold;
+      text-align: right;
+      margin: 0 7px;
+      float: right;
+      font-size: 16px;
+      color: #65A145;
+    }
+
+    .offer-ref-price {
+      text-align: right;
+      font-weight: normal;
+      font-size: 80%;
+      color: #676767;
+    }
+  }
+
+}

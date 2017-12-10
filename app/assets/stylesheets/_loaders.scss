@@ -1,0 +1,7 @@
+$primary-color: #a1a1a1;
+
+@import 'loaders.css/src/animations/ball-grid-beat';
+
+.ball-grid-beat > div {
+  background: #999999 !important;
+}
