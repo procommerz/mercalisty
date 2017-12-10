@@ -6,17 +6,17 @@ class Agents::CrfController < Agents::BaseController
     zone_id = params[:zone_id] || '010974'
     per_page = 14
 
-    url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
+    url = "https://www.carrefour.es/supermercado/browse?Ntt=#{query}&sb=true"
 
     begin
       body = open(url).read
 
-      data = JSON.parse(body)
+      page = Nokogiri::HTML(body)
 
-      offers = get_offers_from_agent_results(data)
+      offers = get_offers_from_agent_results(page)
 
       render json: {
-          provider: 'eci',
+          provider: 'crf',
           offers: offers
       }
 
@@ -30,14 +30,14 @@ class Agents::CrfController < Agents::BaseController
 
   protected
 
-  def get_offers_from_agent_results(json)
+  def get_offers_from_agent_results(page)
     offers = []
 
-    if json['catalog_result']['products_list'] and json['catalog_result']['products_list']['items']
-      json['catalog_result']['products_list']['items'].map { |item|
-        offers << JsonModel::Offer.from_eci_json(item)
-      }
-    end
+    item_nodes = page.css('article.item')
+
+    item_nodes.map { |node|
+      offers << JsonModel::Offer.from_crf_html_node(node)
+    }
 
     offers
   end

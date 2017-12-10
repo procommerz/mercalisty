@@ -40,6 +40,22 @@ class JsonModel::Offer < JsonModel::Base
     offer
   end
 
+  def self.from_crf_html_node(node)
+    name = node.css('.name-marca a').map(&:text).first
+    thumb_url = image_url = node.css('.image img').first.try(:attribute, 'src').try(:value)
+    price = node.css('.content-price .price')[0].text.split("\n").last.split(" ")[0].gsub(',', '.').to_f
+    price_per_kilo = node.css('.content-price .desc-product')[0].text.split("\n").last.split(" ").last.gsub(',', '.') + " / Kg o litr."
+    agent_url = "https://www.carrefour.es" + node.css('.image a')[0].attribute('href').value
+    agent_id = node.css('h2.name-product')[0].attribute('id').value.split('-').last
+
+    offer = self.new({ name: name,
+                       thumb_url: thumb_url, image_url: image_url, price: price, price_per_kilo: price_per_kilo,
+                       agent_url: agent_url,
+                       agent_id: agent_id })
+
+    offer
+  end
+
   def as_json(param)
     super(param)
   end

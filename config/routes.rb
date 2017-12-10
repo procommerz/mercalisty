@@ -7,6 +7,10 @@ Rails.application.routes.draw do
     namespace :eci do
       get :search_offers
     end
+
+    namespace :crf do
+      get :search_offers
+    end
   end
 
   match '*path' => 'home#index', via: [:get]

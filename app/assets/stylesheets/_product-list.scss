@@ -4,6 +4,10 @@
   padding: 24px;
   font-family: 'Pangolin', cursive;
 
+  & > .btn-group {
+    float: right;
+  }
+
   .no-results {
     color: #99999C;
     font-size: 24px;

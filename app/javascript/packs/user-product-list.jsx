@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { InputGroup, Input, InputGroupAddon } from 'reactstrap'
+import { ButtonGroup, Button, InputGroup, Input, InputGroupAddon } from 'reactstrap'
 import { ListEntryData } from './list-entry-data.es6'
 import keydown, { Keys } from 'react-keydown';
 import sprintf from 'sprintf';
@@ -17,6 +17,7 @@ export class UserProductList extends React.Component {
 
     this.state = {
       fetchedResultsOnce: false,
+      agent: 'crf',
       entries: [
         new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }),
       ],
@@ -43,11 +44,22 @@ export class UserProductList extends React.Component {
       entries.push(this.renderEntry(entry, num))
     });
 
-    let selectedTotal = _.chain(this.state.entries)
-      .map((entry) => entry.focusedOfferNum === null ? 0 : parseFloat(entry.offers[entry.focusedOfferNum].price))
-      .reduce((memo, num) => memo + num).value();
+    let selectedTotal = 0;
+
+    try {
+      selectedTotal = _.chain(this.state.entries)
+        .map((entry) => entry.focusedOfferNum === null ? 0 : parseFloat(entry.offers[entry.focusedOfferNum].price))
+        .reduce((memo, num) => memo + num).value();
+
+    } catch(e) {
+      console.warn("Error during calculation of total", e);
+    }
 
     return (<div className="UserProductList">
+      <ButtonGroup>
+        <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'primary' : 'light'}>Supermercado El Corte Ingles</Button>
+        <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'primary' : 'light'}>Supermercado Carrefour</Button>
+      </ButtonGroup>
       <ul>
         { entries }
       </ul>
@@ -79,7 +91,8 @@ export class UserProductList extends React.Component {
 
     // Set focus shortly after rendering (left without a clue about how to do it 'the react-way')
     setTimeout(function() {
-      scope.entryElements[scope.state.currentIndex].focus();
+      if (scope.entryElements[scope.state.currentIndex])
+        scope.entryElements[scope.state.currentIndex].focus();
     }, 10);
 
     let productWidth = 180;
@@ -111,7 +124,7 @@ export class UserProductList extends React.Component {
         value={ entry.getValue() }
         onChange={ this.onEntryChange.bind(this, num) }
         onBlur={ this.onEntryBlur.bind(this, num) }
-        onKeyDown={this.addEntry} onFocus={this.onEntryFocus.bind(this, num)} />
+        onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
       { entry.offersExpanded && <div className="product-offers">
         <div className="scroll-container" style={{width: '5000%' }}>
@@ -124,32 +137,39 @@ export class UserProductList extends React.Component {
   }
 
   @keydown(ENTER, TAB, Keys.down, Keys.up, Keys.backspace) // could also be an array
-  addEntry(event) {
+  onKeyDown(event) {
     if ( event.which === ENTER ) {
       let state = this.state;
       let scope = this;
       const previousEntryExpanded = this.state.entries.length > 0 && this.state.entries.offersExpanded;
 
-      let newEntry = new ListEntryData();
-
-      // Add at the end or insert in the middle, depending
-      // on cursor position
-      if (state.currentIndex == state.entries.length - 1) {
-        state.currentIndex += 1;
-        state.entries.push(newEntry);
+      // Scroll to last empty row if available
+      if (this.state.entries[this.state.entries.length - 1].isBlank()) {
+        state.currentIndex = this.state.entries.length - 1;
+        this.setState(state);
       } else {
-        state.entries.splice(state.currentIndex + 1, 0, newEntry);
-        state.currentIndex += 1;
+        let newEntry = new ListEntryData();
+
+        // Add at the end or insert in the middle, depending
+        // on cursor position
+        if (state.currentIndex == state.entries.length - 1) {
+          state.currentIndex += 1;
+          state.entries.push(newEntry);
+        } else {
+          state.entries.splice(state.currentIndex + 1, 0, newEntry);
+          state.currentIndex += 1;
+        }
+
+        this.setState(state);
+
+        if (previousEntryExpanded) {
+          newEntry.loadResults().then((results) => {
+            newEntry.offersExpanded = true;
+            scope.setState(state);
+          })
+        }
       }
 
-      this.setState(state);
-
-      if (previousEntryExpanded) {
-        newEntry.loadResults().then((results) => {
-          newEntry.offersExpanded = true;
-          scope.setState(state);
-        })
-      }
     }
 
     else if (event.which === Keys.down) {
@@ -207,6 +227,7 @@ export class UserProductList extends React.Component {
 
     if (query != null && query.length > 1 && !this.state.entries[entryNum].isOfferValid()) {
       // Load results for the entry
+      this.state.entries[entryNum].agent = this.state.agent;
       this.state.entries[entryNum].loadResults().then(function(result) {
         let state = scope.state;
         scope.setState(state);
@@ -223,7 +244,9 @@ export class UserProductList extends React.Component {
   onEntryClick(entryNum, productData, productNum, event) {
     this.state.currentIndex = entryNum;
     this.state.entries[entryNum].focusedOfferNum = productNum;
-    this.entryElements[this.state.currentIndex].focus();
+
+    if (this.entryElements[this.state.currentIndex])
+      this.entryElements[this.state.currentIndex].focus();
 
     let frame = document.getElementById('shopframe');
     frame.src = productData.agent_url;
@@ -233,6 +256,22 @@ export class UserProductList extends React.Component {
     event.preventDefault();
 
     return false;
+  }
+
+  onAgentSelectionClick(agent, event) {
+    let agentWillChange = agent != this.state.agent;
+
+    this.state.agent = agent;
+    this.setState(this.state);
+
+    let scope = this;
+
+    if (agentWillChange) {
+      this.state.entries.forEach((entry) => {
+        entry.agent = agent;
+        entry.loadResults().then((r) => scope.setState(scope.state))
+      });
+    }
   }
 
   onCollapseAllClick(event) {

@@ -29,6 +29,6 @@ production:
   encoding: unicode
   database: mercalista_production
   username: rails
-  password: 
+  password:
   host: localhost
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

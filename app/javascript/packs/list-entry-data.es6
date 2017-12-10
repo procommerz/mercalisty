@@ -6,7 +6,7 @@ export class ListEntryData {
 
     this.value = data.value || "";
     this.offers = null;
-    this.agent = data.agent || 'eci';
+    this.agent = data.agent || 'crf'; //'eci';
     this.offersLoadedForQuery = null;
     this.offersExpanded = false;
     this.searchFailed = false;
@@ -44,14 +44,14 @@ export class ListEntryData {
    * @returns {boolean}
    */
   isOfferValid() {
-    return this.offersLoadedForQuery == this.getValue();
+    return this.offersLoadedForQuery == (this.agent + this.getValue().toString());
   }
 
   loadResults() {
     this.offers = null;
     this.isLoading = true;
     this.searchFailed = false;
-    this.offersLoadedForQuery = this.getValue();
+    this.offersLoadedForQuery = this.agent + this.getValue().toString();
 
     let entry = this;
 
