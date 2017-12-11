@@ -1,0 +1,6 @@
+<script>
+  window.localSearchList = {
+    token: '<%= @search_list.token %>',
+    queries: <%= raw (@search_list.queries || []).to_s %>
+  }
+</script>

@@ -1,7 +1,7 @@
 .UserProductList {
   width: 100%;
   background: #FFFFFF;
-  padding: 24px;
+  padding: 24px 0px;
   font-family: 'Pangolin', cursive;
 
   & > .btn-group {
@@ -35,7 +35,7 @@
     width: 100%;
     display: block;
     font-size: 28px;
-    padding: 4px 8px;
+    padding: 4px 15px;
     outline: none;
     background: transparent;
     border-bottom: 1px solid #E1E1FA;

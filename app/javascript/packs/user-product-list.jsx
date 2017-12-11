@@ -18,11 +18,23 @@ export class UserProductList extends React.Component {
     this.state = {
       fetchedResultsOnce: false,
       agent: 'eci',
-      entries: [
-        new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }),
-      ],
+      list: window.localSearchList || { token: null },
+      showIntroOverlay: true,
+      showLoadingOverlay: false,
+      entries: [],
       currentIndex: 0 // Index num of current entry
     }
+
+    if (window.localSearchList && window.localSearchList.queries && window.localSearchList.queries.length > 0) {
+      window.localSearchList.queries.forEach((query) => {
+        this.state.entries.push(new ListEntryData({ value: query }));
+      });
+    } else {
+      this.state.entries.push(new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }));
+    }
+
+    if (location.href != 'l/' + this.state.list.token)
+      this.setListLocation();
 
     window.productEntries = this.state.entries;
   }
@@ -56,7 +68,7 @@ export class UserProductList extends React.Component {
     }
 
     return (<div className="UserProductList">
-      <ButtonGroup>
+      <ButtonGroup style={{margin: '0px 15px 0px 15px'}}>
         <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Ingles</Button>
         <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
       </ButtonGroup>
@@ -64,7 +76,7 @@ export class UserProductList extends React.Component {
         { entries }
       </ul>
 
-      <div className="text-center" style={{marginTop: '50px'}}>
+      <div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
         <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '100px', float: 'left'}}>
           – todo
         </button>
@@ -231,7 +243,8 @@ export class UserProductList extends React.Component {
       this.state.entries[entryNum].loadResults().then(function(result) {
         let state = scope.state;
         scope.setState(state);
-      })
+        scope.saveList();
+      });
     }
   }
 
@@ -303,5 +316,57 @@ export class UserProductList extends React.Component {
         this.setState(state);
       }
     });
+  }
+
+  saveList() {
+    let scope = this;
+
+    let params = {
+      token: this.state.list.token,
+      queries: _.map(this.state.entries, (entry) => entry.getValue()),
+      results_data: _.map(this.state.entries, (entry) => ({
+          query: entry.getValue(),
+          offers: _.map(entry.offers, (offer) => ({
+            agent_id: offer.entry_id,
+            agent_url: offer.agent_url,
+            name: offer.name,
+            price: offer.price,
+            price_per_kilo: offer.price_per_kilo,
+            price_per_kilo_text: offer.price_per_kilo_text
+          }))
+        }))
+    };
+
+    return new Promise(function(resolve, reject) {
+      fetch(sprintf("/search_lists/%s.json", scope.state.list.token), { method: 'PATCH',  headers: { 'Content-Type':'application/json' }, body: JSON.stringify(params) })
+        .then(result => {
+          result.json().then(data => {
+            scope.state.list = data;
+            scope.setState(scope.state);
+            resolve(data);
+          });
+        }).catch((error) => reject(error));
+    })
+  }
+
+  // startNewList() {
+  //   return new Promise(function(resolve, reject) {
+  //     fetch(sprintf("/search_lists.json"), { method: 'POST' })
+  //       .then(result => {
+  //         result.json().then(data => {
+  //           if (data.offers == null || data.offers.length == 0)
+  //             entry.searchFailed = true;
+  //
+  //           entry.offers = data.offers;
+  //           entry.isLoading = false;
+  //           resolve(entry.offers, entry);
+  //         });
+  //       });
+  //   })
+  // }
+
+  setListLocation() {
+    // Set location to reloadable url
+    window.history.pushState({"html":"","pageTitle":"Mi lista de compras"},"", sprintf("l/%s", this.state.list.token));
   }
 }

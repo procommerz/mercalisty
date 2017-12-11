@@ -13,5 +13,9 @@ Rails.application.routes.draw do
     end
   end
 
-  # match '*path' => 'home#index', via: [:get]
+  resources :search_lists, only: [:update, :create] do
+
+  end
+
+  match '/l/*path' => 'home#index', via: [:get]
 end

@@ -60,7 +60,7 @@ class Mercalista extends React.Component {
 
 setTimeout(function() {
   let frame = document.getElementById('shopframe');
-  frame.src = 'https://beta.elcorteingles.es/';
+  frame.src = 'about:blank';
 }, 500);
 
 Mercalista.defaultProps = {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171210205156) do
+ActiveRecord::Schema.define(version: 20171211194113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,10 +24,10 @@ ActiveRecord::Schema.define(version: 20171210205156) do
   create_table "search_lists", force: :cascade do |t|
     t.integer "user_id"
     t.string "token"
-    t.integer "queries", array: true
     t.jsonb "results_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "queries", array: true
     t.index ["token"], name: "index_search_lists_on_token"
     t.index ["user_id"], name: "index_search_lists_on_user_id"
   end
