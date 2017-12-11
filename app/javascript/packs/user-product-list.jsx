@@ -348,6 +348,7 @@ export class UserProductList extends React.Component {
       results_data: _.map(this.state.entries, (entry) => ({
           query: entry.getValue(),
           offers: _.map(entry.offers, (offer) => ({
+            agent: scope.state.agent,
             agent_id: offer.entry_id,
             agent_url: offer.agent_url,
             name: offer.name,
