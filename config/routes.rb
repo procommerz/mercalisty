@@ -13,5 +13,5 @@ Rails.application.routes.draw do
     end
   end
 
-  match '*path' => 'home#index', via: [:get]
+  # match '*path' => 'home#index', via: [:get]
 end
