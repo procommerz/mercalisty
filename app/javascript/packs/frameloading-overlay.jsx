@@ -1,5 +1,5 @@
 import React from 'react'
-import {findDOMNode} from 'React-dom';
+import {findDOMNode} from 'react-dom';
 import sprintf from 'sprintf';
 import _ from 'underscore';
 import $ from 'jquery';
