@@ -65,11 +65,11 @@ export class UserProductList extends React.Component {
       </ul>
 
       <div className="text-center" style={{marginTop: '50px'}}>
-        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '180px', float: 'left'}}>
-          Ocultar todo
+        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '100px', float: 'left'}}>
+          – todo
         </button>
 
-        <button className="btn btn-success btn-lg" onClick={ this.onFetchResultsClick.bind(this) } style={{width: '50%', minWidth: '180px', marginLeft: '-180px'}}>
+        <button className="btn btn-success btn-lg" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
           {this.state.fetchedResultsOnce ? (<span><i className="fa fa-refresh"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
         </button>
 
