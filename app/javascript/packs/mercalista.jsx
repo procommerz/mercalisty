@@ -11,7 +11,6 @@ import 'jquery'
 
 import 'loaders.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import ReactGridLayout from "../../../node_modules/react-grid-layout/build/ReactGridLayout";
 
 class Mercalista extends React.Component {
   constructor(props) {
