@@ -6,18 +6,21 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {UserProductList} from './user-product-list'
+import {IntroOverlay} from './intro-overlay'
 import _ from 'underscore'
 import 'jquery'
 
 import 'loaders.css'
 import 'bootstrap/dist/css/bootstrap.css';
+import {FrameloadingOverlay} from "./frameloading-overlay";
 
 class Mercalista extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-
+      showIntro: true,
+      iframeLoading: false,
     };
   }
 
@@ -45,15 +48,32 @@ class Mercalista extends React.Component {
 
     return (<div id="main-view" style={{height: appHeight}}>
       <div className="splitter-listview" style={{width: listviewWidth, height: appHeight, overflowY: 'scroll'}}>
-        <UserProductList />
+        <UserProductList mercalista={this} />
       </div>
       <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
         <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight }} width="100%"></iframe>
       </div>
+      <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />
+      <IntroOverlay visible={this.state.showIntro} style={{width: framebarWidth, height: appHeight }} />
     </div>)
   }
 
   onWindowResize(event) {
+    this.setState(this.state);
+  }
+
+  onFirstProductClick() {
+    this.state.showIntro = false;
+    this.setState(this.state);
+  }
+
+  showFrameLoader() {
+    this.state.iframeLoading = true;
+    this.setState(this.state);
+  }
+
+  hideFrameLoader() {
+    this.state.iframeLoading = false;
     this.setState(this.state);
   }
 }
@@ -61,6 +81,10 @@ class Mercalista extends React.Component {
 setTimeout(function() {
   let frame = document.getElementById('shopframe');
   frame.src = 'about:blank';
+
+  frame.onload = function() {
+    console.log("loaded iframe");
+  }
 }, 500);
 
 Mercalista.defaultProps = {

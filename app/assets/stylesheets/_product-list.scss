@@ -2,7 +2,6 @@
   width: 100%;
   background: #FFFFFF;
   padding: 24px 0px;
-  font-family: 'Pangolin', cursive;
 
   & > .btn-group {
     float: right;
@@ -30,7 +29,15 @@
     margin-bottom: 10px
   }
 
+  .btn-submit {
+    font-family: 'Indie Flower', cursive;
+    font-weight: 700;
+    font-size: 28px;
+    padding-bottom: 4px;
+  }
+
   .entry-input {
+    font-family: 'Indie Flower', cursive;
     border-color: transparent;
     width: 100%;
     display: block;

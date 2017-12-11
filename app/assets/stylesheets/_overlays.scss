@@ -1,0 +1,44 @@
+.framebar-overlay {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  background: rgba(0, 0, 0, .4);
+}
+
+.intro-overlay {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #515151 0%,#343434 100%);
+
+  .inside-1, .inside-1 p {
+    font-family: 'Helvetica Neue', 'Helvetica', Arial;
+    font-size: 20px;
+    text-align: center;
+    background: #28a745;
+    //color: #295122;
+    color: #eafae5;
+  }
+
+  .inside-1 {
+    border-top-left-radius: 56px;
+    border-bottom-right-radius: 90px;
+    border-bottom: 5px solid white;
+    box-shadow: 3px 3px 18px rgba(0, 0, 0, .3);
+  }
+}
+
+.frameloading-overlay {
+  background: rgba(0, 0, 0, .62);
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.inside-1 {
+  width: 80%;
+  padding: 20px;
+}

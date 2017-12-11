@@ -15,12 +15,15 @@ export class UserProductList extends React.Component {
 
     this.entryElements = [];
 
+    this.mercalista = props.mercalista;
+
     this.state = {
       fetchedResultsOnce: false,
       agent: 'eci',
       list: window.localSearchList || { token: null },
       showIntroOverlay: true,
       showLoadingOverlay: false,
+      clickedProductOnce: false,
       entries: [],
       currentIndex: 0 // Index num of current entry
     }
@@ -81,7 +84,7 @@ export class UserProductList extends React.Component {
           – todo
         </button>
 
-        <button className="btn btn-success btn-lg" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
+        <button className="btn btn-success btn-lg btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
           {this.state.fetchedResultsOnce ? (<span><i className="fa fa-refresh"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
         </button>
 
@@ -91,8 +94,6 @@ export class UserProductList extends React.Component {
         </button>
       </div>
       <div className="text-center" style={{margin: '30px auto auto auto', width: '70%'}}>
-        <p className="text-muted">1) Busca las mejores ofertas de supermercados online en tu zona y ahora el tiempo para selecionar los productos con reutilizar la lista!</p>
-        <p className="text-muted">2) <strong>Elige</strong> el proveedor y <strong>entra las cosas</strong> como 'patatas', 'agua mineral' o 'platanos' en la lista y busca las ofertas de provedores!</p>
         <small className="text-muted"><i>Mercalisty ltd. 2017 - 2018</i></small>
       </div>
     </div>)
@@ -112,7 +113,7 @@ export class UserProductList extends React.Component {
 
     if (entry.offers && entry.offersExpanded) {
       _.each(entry.offers, (product, productNum) => {
-        productResults.push(<div className={["offer-item", (entry.focusedOfferNum == productNum) ? 'active' : ''].join(' ')} key={'offer_' + product.agent_id} onClick={this.onEntryClick.bind(this, num, product, productNum)}
+        productResults.push(<div className={["offer-item", (entry.focusedOfferNum == productNum) ? 'active' : ''].join(' ')} key={'offer_' + product.agent_id} onClick={this.onEntryProductClick.bind(this, num, product, productNum)}
           style={{width: productWidth}}>
           <img src={product.image_url} className="thumb" />
           <div className="offer-title">
@@ -167,6 +168,7 @@ export class UserProductList extends React.Component {
         if (state.currentIndex == state.entries.length - 1) {
           state.currentIndex += 1;
           state.entries.push(newEntry);
+          this.saveList();
         } else {
           state.entries.splice(state.currentIndex + 1, 0, newEntry);
           state.currentIndex += 1;
@@ -221,6 +223,7 @@ export class UserProductList extends React.Component {
           state.currentIndex = state.entries.length - 1;
 
         this.setState(state);
+        this.saveList();
       }
     }
   }
@@ -254,15 +257,33 @@ export class UserProductList extends React.Component {
     this.setState(state);
   }
 
-  onEntryClick(entryNum, productData, productNum, event) {
+  onEntryProductClick(entryNum, productData, productNum, event) {
     this.state.currentIndex = entryNum;
     this.state.entries[entryNum].focusedOfferNum = productNum;
+
+    // Remove intro overlays from the default UI state
+
+    if (!this.state.clickedProductOnce) {
+      this.state.clickedProductOnce = true;
+      this.mercalista.onFirstProductClick();
+    }
 
     if (this.entryElements[this.state.currentIndex])
       this.entryElements[this.state.currentIndex].focus();
 
     let frame = document.getElementById('shopframe');
+    let scope = this;
+
+    // Reeeally dirty way to hide the loading overlay
+    setTimeout(function() {
+      scope.mercalista.state.iframeLoading = false;
+      scope.mercalista.setState(scope.mercalista.state);
+    }, 1260);
+
     frame.src = productData.agent_url;
+
+    this.mercalista.state.iframeLoading = true;
+    this.mercalista.setState(this.mercalista.state);
 
     this.setState(this.state);
 
