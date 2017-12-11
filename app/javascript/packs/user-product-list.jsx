@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { ButtonGroup, Button, InputGroup, Input, InputGroupAddon } from 'reactstrap'
-import { ListEntryData } from './list-entry-data.es6'
+import { ListEntryData } from './list-entry-data'
 import keydown, { Keys } from 'react-keydown';
 import sprintf from 'sprintf';
 import _ from 'underscore';
