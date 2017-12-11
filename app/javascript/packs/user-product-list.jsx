@@ -17,7 +17,7 @@ export class UserProductList extends React.Component {
 
     this.state = {
       fetchedResultsOnce: false,
-      agent: 'crf',
+      agent: 'eci',
       entries: [
         new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }),
       ],
