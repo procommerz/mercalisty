@@ -278,14 +278,12 @@ export class UserProductList extends React.Component {
 
     // Reeeally dirty way to hide the loading overlay
     setTimeout(function() {
-      scope.mercalista.state.iframeLoading = false;
-      scope.mercalista.setState(scope.mercalista.state);
+      scope.mercalista.setState({iframeLoading: false});
     }, 1260);
 
     frame.src = productData.agent_url;
 
-    this.mercalista.state.iframeLoading = true;
-    this.mercalista.setState(this.mercalista.state);
+    this.mercalista.setState({iframeLoading: true});
 
     this.setState(this.state);
 

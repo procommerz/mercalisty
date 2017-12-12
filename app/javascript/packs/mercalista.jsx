@@ -63,18 +63,15 @@ class Mercalista extends React.Component {
   }
 
   onFirstProductClick() {
-    this.state.showIntro = false;
-    this.setState(this.state);
+    this.setState({showIntro: false});
   }
 
   showFrameLoader() {
-    this.state.iframeLoading = true;
-    this.setState(this.state);
+    this.setState({iframeLoading: true});
   }
 
   hideFrameLoader() {
-    this.state.iframeLoading = false;
-    this.setState(this.state);
+    this.setState({iframeLoading: false});
   }
 }
 
