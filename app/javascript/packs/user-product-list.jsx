@@ -39,6 +39,8 @@ export class UserProductList extends React.Component {
     if (location.href != 'l/' + this.state.list.token)
       this.setListLocation();
 
+    this.setIframeOffer = props.setIframeOffer;
+
     window.productEntries = this.state.entries;
   }
 
@@ -295,6 +297,9 @@ export class UserProductList extends React.Component {
     this.setState(this.state);
 
     this.saveListFocusedOffers();
+
+    if (this.setIframeOffer)
+      this.setIframeOffer(productData);
 
     event.preventDefault();
 

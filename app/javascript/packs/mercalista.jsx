@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {UserProductList} from './user-product-list'
 import {IntroOverlay} from './intro-overlay'
+import {Button} from 'reactstrap'
 import _ from 'underscore'
 import 'jquery'
 
@@ -52,10 +53,14 @@ class Mercalista extends React.Component {
 
     return (<div id="main-view" style={{height: appHeight}}>
       <div className="splitter-listview" style={{width: listviewWidth, height: appHeight, overflowY: 'scroll'}}>
-        <UserProductList mercalista={this} />
+        <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} mercalista={this} />
       </div>
       <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
-        <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight }} width="100%"></iframe>
+        <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight - 48, display: 'block' }} width="100%"></iframe>
+        <Button onClick={this.onOpenInTabClick.bind(this)} style={{borderRadius: 0, width: '100%', height: 48}}>
+          <i className="fa fa-publish"></i>
+          Abrir en pestaña
+        </Button>
       </div>
       <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />
       <IntroOverlay visible={this.state.showIntro} style={{width: framebarWidth, height: appHeight }} />
@@ -68,6 +73,15 @@ class Mercalista extends React.Component {
 
   onFirstProductClick() {
     this.setState({showIntro: false});
+  }
+
+  setIframeOffer(offer) {
+    this.currentOffer = offer;
+  }
+
+  onOpenInTabClick() {
+    if (this.currentOffer && this.currentOffer.agent_url)
+      window.open(this.currentOffer.agent_url, '_blank');
   }
 
   showFrameLoader() {
