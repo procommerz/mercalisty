@@ -126,7 +126,7 @@ export class UserProductList extends React.Component {
         </div>)
       });
 
-      console.log(productResults);
+      // console.log(productResults);
     }
 
 
@@ -331,7 +331,7 @@ export class UserProductList extends React.Component {
           entry.offersExpanded = true;
           scope.state.fetchedResultsOnce = true;
           let state = scope.state;
-          console.log(state.entries[0].offers);
+          // console.log(state.entries[0].offers);
           scope.setState(state);
         });
       } else {
