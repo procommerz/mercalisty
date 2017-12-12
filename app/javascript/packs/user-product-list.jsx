@@ -248,6 +248,8 @@ export class UserProductList extends React.Component {
         scope.setState(state);
         scope.saveList();
       });
+
+      sendGaEvent('list', 'entryUpdated', this.state.entries[entryNum].getValue());
     }
   }
 
@@ -289,6 +291,8 @@ export class UserProductList extends React.Component {
 
     event.preventDefault();
 
+    sendGaEvent('clicks', 'offerClick', productData.name);
+
     return false;
   }
 
@@ -306,6 +310,8 @@ export class UserProductList extends React.Component {
         entry.loadResults().then((r) => scope.setState(scope.state))
       });
     }
+
+    sendGaEvent('clicks', 'agentChange', agent);
   }
 
   onCollapseAllClick(event) {
@@ -337,6 +343,8 @@ export class UserProductList extends React.Component {
         this.setState(state);
       }
     });
+
+    sendGaEvent('clicks', 'search');
   }
 
   saveList() {
