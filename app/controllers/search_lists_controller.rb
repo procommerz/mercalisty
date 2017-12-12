@@ -3,9 +3,10 @@ class SearchListsController < ApplicationController
   def update
     @search_list = SearchList.find_by(token: params[:id])
 
-    @search_list.queries = params[:queries]
-    @search_list.delivery_zone = params[:zone]
-    @search_list.results_data = params[:results_data]
+    @search_list.queries = params[:queries] if params[:queries]
+    @search_list.delivery_zone = params[:zone] if params[:zone]
+    @search_list.focused_offers = params[:focused_offers] if params[:focused_offers]
+    @search_list.results_data = params[:results_data] if params[:results_data]
     @search_list.save!
 
     render json: @search_list.as_json(only: [:token, :queries])

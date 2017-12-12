@@ -85,7 +85,7 @@ export class UserProductList extends React.Component {
         </button>
 
         <button className="btn btn-success btn-lg btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
-          {this.state.fetchedResultsOnce ? (<span><i className="fa fa-refresh"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
+          {this.state.fetchedResultsOnce ? (<span><i className="fa fa-arrows-ccw"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
         </button>
 
         <button className="btn btn-lg btn-default" style={{float: 'right'}}>
@@ -149,12 +149,18 @@ export class UserProductList extends React.Component {
     </li>)
   }
 
-  @keydown(ENTER, TAB, Keys.down, Keys.up, Keys.backspace) // could also be an array
+  @keydown(ENTER, TAB, Keys.down, Keys.up, Keys.backspace, Keys[',']) // could also be an array
   onKeyDown(event) {
-    if ( event.which === ENTER ) {
+    if ( event.which === ENTER || event.which === Keys[',']) {
       let state = this.state;
       let scope = this;
       const previousEntryExpanded = this.state.entries.length > 0 && this.state.entries.offersExpanded;
+
+      // Remove trailing comma from the current entry if needed
+      if (event.which === Keys[',']) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
 
       // Scroll to last empty row if available
       if (this.state.entries[this.state.entries.length - 1].isBlank()) {
@@ -226,6 +232,7 @@ export class UserProductList extends React.Component {
         this.saveList();
       }
     }
+
   }
 
   onEntryChange(entryNum, event) {
@@ -278,14 +285,16 @@ export class UserProductList extends React.Component {
 
     // Reeeally dirty way to hide the loading overlay
     setTimeout(function() {
-      scope.mercalista.setState({iframeLoading: false});
+      scope.mercalista.hideFrameLoader();
     }, 1260);
 
     frame.src = productData.agent_url;
 
-    this.mercalista.setState({iframeLoading: true});
+    this.mercalista.showFrameLoader();
 
     this.setState(this.state);
+
+    this.saveListFocusedOffers();
 
     event.preventDefault();
 
@@ -327,22 +336,46 @@ export class UserProductList extends React.Component {
       if (!entry.isOfferValid() && !entry.isBlank()) {
         entry.loadResults().then(function(result) {
           entry.offersExpanded = true;
-          scope.state.fetchedResultsOnce = true;
-          let state = scope.state;
+
           // console.log(state.entries[0].offers);
-          scope.setState(state);
+          scope.setState({fetchedResultsOnce: true});
         });
       } else {
         if (!entry.isBlank())
           entry.offersExpanded = true;
 
-        this.state.fetchedResultsOnce = true;
-        let state = this.state;
-        this.setState(state);
+        this.setState({fetchedResultsOnce: true});
       }
     });
 
     sendGaEvent('clicks', 'search');
+  }
+
+  /**
+   * Saves the list, but sends only list positions of selected offers,
+   * which makes the request much smaller. It's important because the request
+   * gets fired effectively on every offer click.
+   *
+   * @returns {Promise}
+   */
+  saveListFocusedOffers() {
+    let scope = this;
+
+    let params = {
+      token: this.state.list.token,
+      focused_offers: _.map(this.state.entries, (entry) => (entry.focusedOfferNum && entry.offers[entry.focusedOfferNum]) ? entry.offers[entry.focusedOfferNum].name : '')
+    };
+
+    return new Promise(function(resolve, reject) {
+      fetch(sprintf("/search_lists/%s.json", scope.state.list.token), { method: 'PATCH',  headers: { 'Content-Type':'application/json' }, body: JSON.stringify(params) })
+        .then(result => {
+          result.json().then(data => {
+            scope.state.list = data;
+            scope.setState(scope.state);
+            resolve(data);
+          });
+        }).catch((error) => reject(error));
+    })
   }
 
   saveList() {
@@ -351,6 +384,7 @@ export class UserProductList extends React.Component {
     let params = {
       token: this.state.list.token,
       queries: _.map(this.state.entries, (entry) => entry.getValue()),
+      focused_offers: _.map(this.state.entries, (entry) => (entry.focusedOfferNum && entry.offers[entry.focusedOfferNum]) ? entry.offers[entry.focusedOfferNum].name : ''),
       results_data: _.map(this.state.entries, (entry) => ({
           query: entry.getValue(),
           offers: _.map(entry.offers, (offer) => ({
