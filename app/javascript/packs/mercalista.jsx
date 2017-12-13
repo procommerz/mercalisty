@@ -80,8 +80,10 @@ class Mercalista extends React.Component {
   }
 
   onOpenInTabClick() {
-    if (this.currentOffer && this.currentOffer.agent_url)
+    if (this.currentOffer && this.currentOffer.agent_url) {
       window.open(this.currentOffer.agent_url, '_blank');
+      sendGaEvent('exit', 'openShop');
+    }
   }
 
   showFrameLoader() {
