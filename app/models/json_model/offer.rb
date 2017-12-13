@@ -63,7 +63,7 @@ class JsonModel::Offer < JsonModel::Base
     price_node = node.css('.s-price').any? ? node.css('.s-price')[0] : node.css('.a-color-price')[0]
 
     if price_node
-      price = price_node.text.split("\n").last.split(" ")[0].gsub(',', '.').gsub('EUR', '').squish.to_f
+      price = price_node.text.squish.gsub(',', '.').gsub('EUR', '').squish.to_f
     else
       price = 0
     end
