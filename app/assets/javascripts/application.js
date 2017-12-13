@@ -16,17 +16,12 @@
 //= require_self
 
 
-window.sendGaEvent = function(category, action, label, value) {
+window.sendGaEvent = function(category, action, label, value, fields) {
   // console.log("Tracking", "sendEvent", category, action, label, value);
 
   if (window.dataLayer == null)
     window.dataLayer = [];
 
-  window.dataLayer.push({
-    event: category,
-    eventCategory: category,
-    eventAction: action,
-    eventLabel: label,
-    conversionValue: value
-  });
+  if (window.ga)
+    ga('send', 'event', category, action, label, value, fields);
 };
