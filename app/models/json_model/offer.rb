@@ -56,6 +56,36 @@ class JsonModel::Offer < JsonModel::Base
     offer
   end
 
+  def self.from_amz_html_node(node)
+    name = node.css('h2').map(&:text).first
+    thumb_url = image_url = node.css('.a-col-left img').first.try(:attribute, 'src').try(:value)
+
+    price_node = node.css('.s-price').any? ? node.css('.s-price')[0] : node.css('.a-color-price')[0]
+
+    if price_node
+      price = price_node.text.split("\n").last.split(" ")[0].gsub(',', '.').gsub('EUR', '').squish.to_f
+    else
+      price = 0
+    end
+
+    price_per_kilo = nil
+
+    if node.css('a.a-link-normal').any?
+      agent_url = node.css('a.a-link-normal')[0].attribute('href').value
+      agent_id = agent_url.gsub('https://www.amazon.es/', '')
+    else
+      agent_url = ''
+      agent_id = (rand * 10000000).to_s
+    end
+
+    offer = self.new({ name: name,
+                       thumb_url: thumb_url, image_url: image_url, price: price, price_per_kilo: price_per_kilo,
+                       agent_url: agent_url,
+                       agent_id: agent_id })
+
+    offer
+  end
+
   def as_json(param)
     super(param)
   end

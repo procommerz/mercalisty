@@ -4,7 +4,7 @@ class Agents::EciController < Agents::BaseController
   def search_offers
     query = params[:query].to_s.downcase
     zone_id = params[:zone_id] || '010974'
-    per_page = 14
+    per_page = 50
 
     url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
 

@@ -24,6 +24,9 @@ class Mercalista extends React.Component {
       iframeLoading: false,
     };
 
+    if (window.environment == 'development')
+      window.mercalista = this;
+
     this.hideFrameLoader = this.hideFrameLoader.bind(this);
     this.showFrameLoader = this.showFrameLoader.bind(this);
     this.onFirstProductClick = this.onFirstProductClick.bind(this);
@@ -82,7 +85,7 @@ class Mercalista extends React.Component {
   onOpenInTabClick() {
     if (this.currentOffer && this.currentOffer.agent_url) {
       window.open(this.currentOffer.agent_url, '_blank');
-      sendGaEvent('exit', 'openShop');
+      sendGaEvent('exit', 'openShop', this.currentOffer.agent);
     }
   }
 

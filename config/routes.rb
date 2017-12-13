@@ -11,6 +11,10 @@ Rails.application.routes.draw do
     namespace :crf do
       get :search_offers
     end
+
+    namespace :amz do
+      get :search_offers
+    end
   end
 
   resources :search_lists, only: [:update, :create] do
