@@ -22,6 +22,6 @@ window.sendGaEvent = function(category, action, label, value, fields) {
   if (window.dataLayer == null)
     window.dataLayer = [];
 
-  if (window.ga)
-    ga('send', 'event', category, action, label, value, fields);
+  if (window.gtag)
+    gtag('send', 'event', category, action, label, value, fields);
 };
