@@ -5,6 +5,7 @@ class SearchListsController < ApplicationController
 
     @search_list.queries = params[:queries] if params[:queries]
     @search_list.delivery_zone = params[:zone] if params[:zone]
+    @search_list.agents = params[:agents] if params[:agents]
     @search_list.focused_offers = params[:focused_offers] if params[:focused_offers]
     @search_list.results_data = params[:results_data] if params[:results_data]
     @search_list.save!

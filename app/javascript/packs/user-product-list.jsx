@@ -29,12 +29,15 @@ export class UserProductList extends React.Component {
     }
 
     if (window.localSearchList && window.localSearchList.queries && window.localSearchList.queries.length > 0) {
-      window.localSearchList.queries.forEach((query) => {
-        this.state.entries.push(new ListEntryData({ value: query }));
+      window.localSearchList.queries.forEach((query, num) => {
+        this.state.entries.push(new ListEntryData({ value: query, agent: window.localSearchList.agents[num] }));
       });
     } else {
       this.state.entries.push(new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }));
     }
+
+    if (this.state.entries[0])
+      this.state.agent = this.state.entries[0].agent;
 
     if (location.href != 'l/' + this.state.list.token)
       this.setListLocation();
@@ -318,9 +321,24 @@ export class UserProductList extends React.Component {
     let scope = this;
 
     if (agentWillChange) {
-      this.state.entries.forEach((entry) => {
+      var count = this.state.entries.length;
+
+      this.state.entries.forEach((entry, num) => {
         entry.agent = agent;
-        entry.loadResults().then((r) => scope.setState(scope.state))
+
+        if (entry.isBlank()) {
+          count -= 1;
+          return;
+        }
+
+        entry.loadResults().then((r) => {
+          scope.setState(scope.state);
+
+          // Update list on last save
+          if (num == count - 1) {
+            setTimeout(() => scope.saveList());
+          }
+        })
       });
     }
 
@@ -389,6 +407,7 @@ export class UserProductList extends React.Component {
 
     let params = {
       token: this.state.list.token,
+      agents: _.map(this.state.entries, (entry) => scope.state.agent),
       queries: _.map(this.state.entries, (entry) => entry.getValue()),
       focused_offers: _.map(this.state.entries, (entry) => (entry.focusedOfferNum && entry.offers[entry.focusedOfferNum]) ? entry.offers[entry.focusedOfferNum].name : ''),
       results_data: _.map(this.state.entries, (entry) => ({
