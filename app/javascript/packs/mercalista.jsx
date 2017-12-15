@@ -56,7 +56,7 @@ class Mercalista extends React.Component {
 
     return (<div id="main-view" style={{height: appHeight}}>
       <div className="splitter-listview" style={{width: listviewWidth, height: appHeight, overflowY: 'scroll'}}>
-        <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} mercalista={this} />
+        <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} framebarWidth={framebarWidth} mercalista={this} />
       </div>
       <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
         <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight - 48, display: 'block' }} width="100%"></iframe>

@@ -17,6 +17,8 @@ export class UserProductList extends React.Component {
 
     this.mercalista = props.mercalista;
 
+    this.framebarWidth = props.framebarWidth;
+
     this.state = {
       fetchedResultsOnce: false,
       agent: 'eci',
@@ -41,6 +43,8 @@ export class UserProductList extends React.Component {
 
     if (location.href != 'l/' + this.state.list.token)
       this.setListLocation();
+
+    this.extWindow = null;
 
     this.setIframeOffer = props.setIframeOffer;
 
@@ -286,15 +290,28 @@ export class UserProductList extends React.Component {
     if (this.entryElements[this.state.currentIndex])
       this.entryElements[this.state.currentIndex].focus();
 
-    let frame = document.getElementById('shopframe');
-    let scope = this;
+    if (this.state.agent == 'amz') {
+      if (this.extWindow == null) {
+        this.extWindow = window.open(productData.agent_url, '_blank',
+          sprintf('toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=%d, height=%d', this.framebarWidth, window.screen.height));
+      } else {
+        this.extWindow = window.open(productData.agent_url, '_blank',
+          sprintf('toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=%d, height=%d', this.framebarWidth, window.screen.height), true);
+      }
 
-    // Reeeally dirty way to hide the loading overlay
-    setTimeout(function() {
-      scope.mercalista.hideFrameLoader();
-    }, 1260);
+      this.extWindow.moveBy(window.innerWidth - this.framebarWidth, 0);
 
-    frame.src = productData.agent_url;
+    } else {
+      let frame = document.getElementById('shopframe');
+      let scope = this;
+
+      // Reeeally dirty way to hide the loading overlay
+      setTimeout(function() {
+        scope.mercalista.hideFrameLoader();
+      }, 1260);
+
+      frame.src = productData.agent_url;
+    }
 
     this.mercalista.showFrameLoader();
 
