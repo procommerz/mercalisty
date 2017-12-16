@@ -37,20 +37,3 @@ body
   #main-view
     width: 80%
     margin: 25px auto
-
-
-// Dialog transitions
-
-.ui-dialog-enter
-  transform: translate3d(0, -120%, 0)
-
-.ui-dialog-enter.ui-dialog-enter-active
-  transform: translate3d(0, 0, 0)
-  transition: transform 300ms ease-out
-
-.ui-dialog-leave
-  transform: translate3d(0, 0, 0)
-
-.ui-dialog-leave.ui-dialog-leave-active
-  transform: translate3d(0, -120%, 0)
-  transition: transform 200ms ease-out

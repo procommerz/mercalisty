@@ -15,7 +15,7 @@ import {UserProductList} from './user-product-list'
 import {IntroOverlay} from './intro-overlay'
 import {Button} from 'reactstrap'
 import {PreferencesDialog} from './preferences-dialog'
-import {CSSTransitionGroup} from 'react-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {FrameloadingOverlay} from "./frameloading-overlay";
 
 class Mercalista extends React.Component {
@@ -73,12 +73,12 @@ class Mercalista extends React.Component {
         <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} framebarWidth={framebarWidth}
                          onPreferencesClick={this.onPreferencesClick.bind(this)}
                          mercalista={this} />
-        {/*<CSSTransitionGroup*/}
-          {/*transitionName="ui-dialog"*/}
-          {/*transitionEnterTimeout={300}*/}
-          {/*transitionLeaveTimeout={200}>*/}
+        <ReactCSSTransitionGroup
+          transitionName="ui-dialog"
+          transitionEnterTimeout={300}
+          transitionLeaveTimeout={200}>
           {dialogs}
-        {/*</CSSTransitionGroup>*/}
+        </ReactCSSTransitionGroup>
       </div>
       <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
         <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight - 48, display: 'block' }} width="100%"></iframe>
