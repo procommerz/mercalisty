@@ -138,6 +138,9 @@ export class UserProductList extends React.Component {
             €{product.price}
             {product.price_per_kilo && <div className="offer-ref-price">{product.price_per_kilo}</div>}
           </div>
+          <button className="pin-offer" onClick={scope.pinOffer.bind(scope, num, product)}>
+            <i className="fa fa-pin"></i>
+          </button>
         </div>)
       });
 
@@ -250,6 +253,11 @@ export class UserProductList extends React.Component {
 
   }
 
+  pinOffer(entryNum, productData) {
+    this.state.entries[entryNum].value = productData.name;
+    this.setState(this.state);
+    this.saveList();
+  }
   onEntryChange(entryNum, event) {
     let state = this.state;
 

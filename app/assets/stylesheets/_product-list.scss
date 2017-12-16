@@ -136,6 +136,25 @@
       font-size: 80%;
       color: #676767;
     }
+
+    button.pin-offer {
+      border: transparent;
+      -webkit-border-radius: 12px;
+      -moz-border-radius: 12px;
+      border-radius: 12px;
+      background: #868e96;
+      color: white;
+      margin-top: 14px;
+
+      &:hover {
+        background: #696f77;
+        color: white;
+      }
+
+      &:active {
+        box-shadow: -2px -2px 4px rgba(0, 0, 0, .1);
+      }
+    }
   }
 
 }
