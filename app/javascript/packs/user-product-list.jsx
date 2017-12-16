@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ButtonGroup, Button, InputGroup, Input, InputGroupAddon } from 'reactstrap'
 import { ListEntryData } from './list-entry-data'
+import {UserPreferences} from './user-preferences'
 import keydown, { Keys } from 'react-keydown';
 import sprintf from 'sprintf';
 import _ from 'underscore';
@@ -47,6 +48,7 @@ export class UserProductList extends React.Component {
     this.extWindow = null;
 
     this.setIframeOffer = props.setIframeOffer;
+    this.onPreferencesClick = props.onPreferencesClick;
 
     window.productEntries = this.state.entries;
   }
@@ -84,6 +86,9 @@ export class UserProductList extends React.Component {
         <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
         <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
         <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
+        <Button onClick={this.onPreferencesClick}>
+          <i className="fa fa-th-list"></i>
+        </Button>
       </ButtonGroup>
       <ul>
         { entries }
@@ -447,6 +452,13 @@ export class UserProductList extends React.Component {
           result.json().then(data => {
             scope.state.list = data;
             scope.setState(scope.state);
+
+            // Serialize localStorage
+            let prefs = new UserPreferences();
+
+            prefs.updateList(Object.assign({}, data, { agent: scope.state.agent }));
+            prefs.save();
+
             resolve(data);
           });
         }).catch((error) => reject(error));

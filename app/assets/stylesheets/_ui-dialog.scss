@@ -1,0 +1,49 @@
+.ui-dialog {
+  font-size: 20px;
+  color: white;
+  overflow-y: scroll;
+
+  button {
+    background: #4e4e4e;
+    color: #d4dfe8;
+    border-radius: 16px;
+  }
+
+  input {
+    border: 1px solid #32354b;
+    border-bottom: 1px solid #292c3f;
+    border-radius: 12px;
+    background: #414555;
+    color: #e6f1fa;
+  }
+}
+
+.ui-dialog.PreferencesDialog {
+  ul.lists {
+    margin-top: 60px;
+    padding-right: 90px;
+    list-style: square;
+
+    li {
+      transition: all 200ms ease-out;
+      background: transparent;
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+
+    li:hover {
+      background: #414555;
+      border-radius: 16px;
+
+      .agent {
+        color: #e6f1fa;
+      }
+    }
+
+    .agent {
+      font-size: 16px;
+      color: #adb8c1;
+      style: italic;
+    }
+  }
+}

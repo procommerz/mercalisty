@@ -2,17 +2,20 @@
 // like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
 // of the page.
 
+import 'loaders.css'
+import 'bootstrap/dist/css/bootstrap.css';
+
+import _ from 'underscore'
+import 'jquery'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {UserProductList} from './user-product-list'
 import {IntroOverlay} from './intro-overlay'
 import {Button} from 'reactstrap'
-import _ from 'underscore'
-import 'jquery'
-
-import 'loaders.css'
-import 'bootstrap/dist/css/bootstrap.css';
+import {PreferencesDialog} from './preferences-dialog'
+import {CSSTransitionGroup} from 'react-transition-group';
 import {FrameloadingOverlay} from "./frameloading-overlay";
 
 class Mercalista extends React.Component {
@@ -21,6 +24,7 @@ class Mercalista extends React.Component {
 
     this.state = {
       showIntro: true,
+      showPreferences: false,
       iframeLoading: false,
     };
 
@@ -54,9 +58,27 @@ class Mercalista extends React.Component {
     let framebarWidth = appWidth * 0.3;
     let listviewWidth = appWidth - framebarWidth;
 
+    let dialogs = [];
+
+    if (this.state.showPreferences) {
+      dialogs.push(<PreferencesDialog className="PreferencesDialog ui-dialog"
+       key="preferences"
+       displayed={this.state.showPreferences}
+       style={{width: listviewWidth, height: appHeight }}
+       mercalista={this} />);
+    }
+
     return (<div id="main-view" style={{height: appHeight}}>
       <div className="splitter-listview" style={{width: listviewWidth, height: appHeight, overflowY: 'scroll'}}>
-        <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} framebarWidth={framebarWidth} mercalista={this} />
+        <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} framebarWidth={framebarWidth}
+                         onPreferencesClick={this.onPreferencesClick.bind(this)}
+                         mercalista={this} />
+        {/*<CSSTransitionGroup*/}
+          {/*transitionName="ui-dialog"*/}
+          {/*transitionEnterTimeout={300}*/}
+          {/*transitionLeaveTimeout={200}>*/}
+          {dialogs}
+        {/*</CSSTransitionGroup>*/}
       </div>
       <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
         <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight - 48, display: 'block' }} width="100%"></iframe>
@@ -95,6 +117,10 @@ class Mercalista extends React.Component {
 
   hideFrameLoader() {
     this.setState({iframeLoading: false});
+  }
+
+  onPreferencesClick() {
+    this.setState({showPreferences: !this.state.showPreferences});
   }
 }
 
