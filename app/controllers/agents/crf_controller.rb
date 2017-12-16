@@ -6,6 +6,7 @@ class Agents::CrfController < Agents::BaseController
     zone_id = params[:zone_id] || '010974'
     per_page = 14
 
+    query = CGI.escape(query)
     url = "https://www.carrefour.es/supermercado/browse?Ntt=#{query}&sb=true"
 
     begin

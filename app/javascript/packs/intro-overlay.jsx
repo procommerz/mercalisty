@@ -35,7 +35,7 @@ export class IntroOverlay extends React.Component {
     return (<div className="framebar-overlay intro-overlay" style={this.props.style}>
       <div className="inside-1">
         <div className="text-center" style={{margin: '20px'}}>
-          <p className=""><strong>Busca las mejores ofertas</strong> de supermercados online en tu zona y ahora el tiempo para selecionar los productos con reutilizar la lista!</p>
+          <p className=""><strong>Busca las mejores ofertas</strong> de supermercados online en tu zona y ahora el tiempo para seleccionar los productos con listas permanentes!</p>
           <p className=""><strong>Elige</strong> el proveedor y <strong>entra las cosas</strong> como 'patatas', 'agua mineral' o 'platanos' en la lista y busca las ofertas de provedores!</p>
         </div>
       </div>

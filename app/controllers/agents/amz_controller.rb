@@ -6,6 +6,7 @@ class Agents::AmzController < Agents::BaseController
     zone_id = params[:zone_id]
     per_page = 14
 
+    query = CGI.escape(query)
     url = "https://www.amazon.es/s/ref=nb_sb_noss_2/257-2604327-1017544?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&url=search-alias%3Daps&field-keywords=#{query}"
 
     begin

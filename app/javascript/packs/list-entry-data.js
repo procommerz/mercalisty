@@ -56,7 +56,7 @@ export class ListEntryData {
     let entry = this;
 
     return new Promise(function(resolve, reject) {
-      fetch(sprintf("/agents/%s/search_offers?query=%s", entry.agent, entry.getValue()), { method: 'GET' })
+      fetch(sprintf("/agents/%s/search_offers?query=%s", entry.agent, encodeURIComponent(entry.getValue())), { method: 'GET' })
         .then(result => {
           result.json().then(data => {
             if (data.offers == null || data.offers.length == 0)

@@ -6,6 +6,7 @@ class Agents::EciController < Agents::BaseController
     zone_id = params[:zone_id] || '010974'
     per_page = 50
 
+    query = CGI.escape(query)
     url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
 
     begin
