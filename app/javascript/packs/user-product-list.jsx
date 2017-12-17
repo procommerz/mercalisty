@@ -129,7 +129,7 @@ export class UserProductList extends React.Component {
   renderButtonsDesktop(props, selectedTotal) {
     return (<div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
       <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '100px', float: 'left'}}>
-        – todo
+        <i className={"fa-resize-small"}></i> todo
       </button>
 
       <button className="btn btn-success btn-lg btn-xl btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
@@ -147,7 +147,7 @@ export class UserProductList extends React.Component {
   renderButtonsMobile(props, selectedTotal) {
     return (<div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
         <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '50px', float: 'left'}}>
-          –
+          <i className={"fa-resize-small"}></i>
         </button>
 
         <button className="btn btn-success btn-lg btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
@@ -200,8 +200,14 @@ export class UserProductList extends React.Component {
         onBlur={ this.onEntryBlur.bind(this, num) }
         onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
+      <div className="active-buttons">
+        <button onClick={this.onToggleEntryClick.bind(this, num)}>
+          <i className={"fa " + (entry.offersExpanded ? "fa-resize-small" : "fa-resize-full-alt")}></i>
+        </button>
+      </div>
+
       { entry.offersExpanded && <div className="product-offers">
-        <div className="scroll-container" style={{width: '5000%', webkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
+        <div className="scroll-container" style={{width: '5000%', WebkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
           { productResults.length > 0 ? productResults : '' }
           { !entry.isLoading && productResults.length == 0 && (<span className="no-results">No encontramos ningunos productos :(...</span>) }
         </div>
@@ -306,6 +312,7 @@ export class UserProductList extends React.Component {
     this.setState(this.state);
     this.saveList();
   }
+
   onEntryChange(entryNum, event) {
     let state = this.state;
 
@@ -335,6 +342,17 @@ export class UserProductList extends React.Component {
     let state = this.state;
     state.currentIndex = entryNum;
     this.setState(state);
+  }
+
+  onToggleEntryClick(entryNum, event) {
+    let scope = this;
+
+    this.state.entries[entryNum].offersExpanded = !this.state.entries[entryNum].offersExpanded;
+    this.setState(this.state);
+
+    if (!this.state.entries[entryNum].isOfferValid())
+      this.state.entries[entryNum].loadResults().then(() => scope.setState(scope.state));
+
   }
 
   onEntryProductClick(entryNum, productData, productNum, event) {

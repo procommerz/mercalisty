@@ -13,3 +13,11 @@
 .fa-th-list:before { content: '\e80b'; } /* '' */
 .fa-pin:before { content: '\e80c'; } /* '' */
 .fa-pin-outline:before { content: '\e80d'; } /* '' */
+.fa-attention:before { content: '\e80e'; } /* '' */
+.fa-resize-full-alt:before { content: '\e80f'; } /* '' */
+.fa-resize-small:before { content: '\e810'; } /* '' */
+.fa-comment-alt:before { content: '\e811'; } /* '' */
+.fa-user:before { content: '\e812'; } /* '' */
+.fa-heart:before { content: '\e813'; } /* '' */
+.fa-star:before { content: '\e814'; } /* '' */
+.fa-heart-empty:before { content: '\e815'; } /* '' */

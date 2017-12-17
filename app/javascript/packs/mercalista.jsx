@@ -91,7 +91,7 @@ class Mercalista extends React.Component {
         </ReactCSSTransitionGroup>
       </div>
       <div className={'splitter-framebar ' + (this.state.showIframe ? 'displayed' : 'hidden')} style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
-        <div className="iframe-container" style={{width: '100%', height: appHeight - 48, webkitOverflowScrolling: 'touch', overflowY: 'scroll', width: '100%'}}>
+        <div className="iframe-container" style={{width: '100%', height: appHeight - 48, WebkitOverflowScrolling: 'touch', overflowY: 'scroll', width: '100%'}}>
           <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: (window.isMobile ? '100%' : appHeight - 48), display: 'block' }} width="100%"></iframe>
         </div>
         {!window.isMobile ? this.renderIframeToolbarDesktop(props) : this.renderIframeToolbarMobile(props)}
