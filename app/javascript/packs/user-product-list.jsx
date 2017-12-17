@@ -162,7 +162,7 @@ export class UserProductList extends React.Component {
 
     // Set focus shortly after rendering (left without a clue about how to do it 'the react-way')
     setTimeout(function() {
-      if (scope.entryElements[scope.state.currentIndex])
+      if (!window.isMobile && scope.entryElements[scope.state.currentIndex])
         scope.entryElements[scope.state.currentIndex].focus();
     }, 10);
 
@@ -201,7 +201,7 @@ export class UserProductList extends React.Component {
         onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
       { entry.offersExpanded && <div className="product-offers">
-        <div className="scroll-container" style={{width: '5000%' }}>
+        <div className="scroll-container" style={{width: '5000%', webkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
           { productResults.length > 0 ? productResults : '' }
           { !entry.isLoading && productResults.length == 0 && (<span className="no-results">No encontramos ningunos productos :(...</span>) }
         </div>
@@ -240,6 +240,11 @@ export class UserProductList extends React.Component {
           state.entries.splice(state.currentIndex + 1, 0, newEntry);
           state.currentIndex += 1;
         }
+
+        setTimeout(function() {
+          if (scope.entryElements[scope.state.currentIndex])
+            scope.entryElements[scope.state.currentIndex].focus();
+        }, 10);
 
         this.setState(state);
 
@@ -343,7 +348,7 @@ export class UserProductList extends React.Component {
       this.mercalista.onFirstProductClick();
     }
 
-    if (this.entryElements[this.state.currentIndex])
+    if (!window.isMobile && this.entryElements[this.state.currentIndex])
       this.entryElements[this.state.currentIndex].focus();
 
     if (this.state.agent == 'amz') {
