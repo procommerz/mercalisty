@@ -8,6 +8,8 @@
     <script>
       if (window.environment == null)
         window.environment = '<%= Rails.env.to_s %>';
+
+      window.isMobile = <%= browser.device.mobile? ? 'true' : 'false' %>;
     </script>
 
     <!-- Google Tag Manager -->
@@ -27,6 +29,10 @@
 
       gtag('config', 'UA-17824914-8');
     </script>
+
+    <% if browser.device.mobile? %>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <% end %>
 
     <link href="https://fonts.googleapis.com/css?family=Pangolin" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">

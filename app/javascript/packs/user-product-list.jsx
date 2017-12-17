@@ -15,10 +15,12 @@ export class UserProductList extends React.Component {
     super(props);
 
     this.entryElements = [];
-
     this.mercalista = props.mercalista;
-
     this.framebarWidth = props.framebarWidth;
+
+    this.setIframeOffer = props.setIframeOffer;
+    this.onPreferencesClick = props.onPreferencesClick;
+    this.openOfferResource = props.openOfferResource;
 
     this.state = {
       fetchedResultsOnce: false,
@@ -47,9 +49,7 @@ export class UserProductList extends React.Component {
 
     this.extWindow = null;
 
-    this.setIframeOffer = props.setIframeOffer;
-    this.onPreferencesClick = props.onPreferencesClick;
-
+    window.UserProductList = this;
     window.productEntries = this.state.entries;
   }
 
@@ -82,36 +82,79 @@ export class UserProductList extends React.Component {
     }
 
     return (<div className="UserProductList">
-      <ButtonGroup style={{margin: '0px 15px 0px 15px'}}>
-        <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
-        <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
-        <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
-        <Button onClick={this.onPreferencesClick}>
-          <i className="fa fa-th-list"></i>
-        </Button>
-      </ButtonGroup>
+      {!window.isMobile ? this.renderAgentsDesktop(props) : this.renderAgentsMobile(props)}
+
       <ul>
         { entries }
       </ul>
 
-      <div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
-        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '100px', float: 'left'}}>
-          – todo
+      {!window.isMobile ? this.renderButtonsDesktop(props, selectedTotal) : this.renderButtonsMobile(props, selectedTotal)}
+
+      <div className="text-center" style={{margin: '30px auto auto auto', width: '70%'}}>
+        <small className="text-muted"><i>Mercalisty ltd. 2017 - 2018</i></small>
+      </div>
+    </div>)
+  }
+
+  renderAgentsDesktop(props) {
+    return (<ButtonGroup style={{margin: '0px 15px 0px 15px'}}>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
+      <Button onClick={this.onPreferencesClick}>
+        <i className="fa fa-th-list"></i>
+      </Button>
+    </ButtonGroup>);
+  }
+
+  renderAgentsMobile(props) {
+    {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>*/}
+    {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>*/}
+    {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>*/}
+    return (<div className="mobile-toolbar-top">
+      <Input type="select" onChange={this.onAgentSelectionChange.bind(this)} value={this.state.agent}>
+        <option value="eci">Supermercado El Corte Inglés</option>
+        <option value="crf">Supermercado Carrefour</option>
+        <option value="amz">Amazon</option>
+      </Input>
+      <div className="buttons" style={{margin: '0px 15px 0px auto', textAlign: 'right'}}>
+        <Button onClick={this.onPreferencesClick}>
+          <i className="fa fa-th-list"></i>
+        </Button>
+      </div>
+      <div className="clearfix"></div>
+    </div>);
+  }
+
+  renderButtonsDesktop(props, selectedTotal) {
+    return (<div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
+      <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '100px', float: 'left'}}>
+        – todo
+      </button>
+
+      <button className="btn btn-success btn-lg btn-xl btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
+        {this.state.fetchedResultsOnce ? (<span><i className="fa fa-arrows-ccw"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
+      </button>
+
+      <button className="btn btn-lg btn-default" style={{float: 'right'}}>
+        Total:
+        €{selectedTotal}
+      </button>
+      </div>
+      );
+  }
+
+  renderButtonsMobile(props, selectedTotal) {
+    return (<div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
+        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '50px', float: 'left'}}>
+          –
         </button>
 
         <button className="btn btn-success btn-lg btn-submit" onClick={ this.onFetchResultsClick.bind(this) } style={{minWidth: '200px'}}>
           {this.state.fetchedResultsOnce ? (<span><i className="fa fa-arrows-ccw"></i> Actualizar</span>) : (<span>Encontrar!</span>)}
         </button>
-
-        <button className="btn btn-lg btn-default" style={{float: 'right'}}>
-          Total:
-          €{selectedTotal}
-        </button>
       </div>
-      <div className="text-center" style={{margin: '30px auto auto auto', width: '70%'}}>
-        <small className="text-muted"><i>Mercalisty ltd. 2017 - 2018</i></small>
-      </div>
-    </div>)
+    );
   }
 
   renderEntry(entry, num) {
@@ -313,33 +356,24 @@ export class UserProductList extends React.Component {
       }
 
       this.extWindow.moveBy(window.innerWidth - this.framebarWidth, 0);
-
+      this.mercalista.showFrameLoader();
     } else {
-      let frame = document.getElementById('shopframe');
-      let scope = this;
-
-      // Reeeally dirty way to hide the loading overlay
-      setTimeout(function() {
-        scope.mercalista.hideFrameLoader();
-      }, 1260);
-
-      frame.src = productData.agent_url;
+      this.openOfferResource(productData)
     }
-
-    this.mercalista.showFrameLoader();
 
     this.setState(this.state);
 
     this.saveListFocusedOffers();
-
-    if (this.setIframeOffer)
-      this.setIframeOffer(productData);
 
     event.preventDefault();
 
     sendGaEvent('clicks', 'offerClick', productData.name);
 
     return false;
+  }
+
+  onAgentSelectionChange(event) {
+    this.onAgentSelectionClick(event.target.value, event);
   }
 
   onAgentSelectionClick(agent, event) {

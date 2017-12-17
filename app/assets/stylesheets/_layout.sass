@@ -37,3 +37,27 @@ body
   #main-view
     width: 80%
     margin: 25px auto
+
+#main-view.mobile
+  .splitter-framebar
+    position: absolute
+    top: 0px
+    bottom: 0px
+    left: 0px
+    right: 0px
+    background: #ffffff
+
+    &.displayed
+      display: block
+
+    &.hidden
+      display: none
+
+.mobile-toolbar-top
+  display: flex
+  justify-content: space-between
+  margin-bottom: 20px
+
+  select.form-control
+    width: auto
+    margin-left: 15px

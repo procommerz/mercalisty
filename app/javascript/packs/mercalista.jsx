@@ -26,6 +26,7 @@ class Mercalista extends React.Component {
       showIntro: true,
       showPreferences: false,
       iframeLoading: false,
+      showIframe: window.isMobile ? false : true,
     };
 
     if (window.environment == 'development')
@@ -58,6 +59,14 @@ class Mercalista extends React.Component {
     let framebarWidth = appWidth * 0.3;
     let listviewWidth = appWidth - framebarWidth;
 
+    let showIframe = this.state.showIframe;
+
+    // Mobile layout
+    if (window.isMobile) {
+      listviewWidth = appWidth;
+      framebarWidth = appWidth;
+    }
+
     let dialogs = [];
 
     if (this.state.showPreferences) {
@@ -68,10 +77,11 @@ class Mercalista extends React.Component {
        mercalista={this} />);
     }
 
-    return (<div id="main-view" style={{height: appHeight}}>
+    return (<div id="main-view" className={"" + (window.isMobile ? " mobile " : '')} style={{height: appHeight}}>
       <div className="splitter-listview" style={{width: listviewWidth, height: appHeight, overflowY: 'scroll'}}>
         <UserProductList setIframeOffer={this.setIframeOffer.bind(this)} framebarWidth={framebarWidth}
                          onPreferencesClick={this.onPreferencesClick.bind(this)}
+                         openOfferResource={this.openOfferResource.bind(this)}
                          mercalista={this} />
         <ReactCSSTransitionGroup
           transitionName="ui-dialog"
@@ -80,16 +90,32 @@ class Mercalista extends React.Component {
           {dialogs}
         </ReactCSSTransitionGroup>
       </div>
-      <div className="splitter-framebar" style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
+      <div className={'splitter-framebar ' + (this.state.showIframe ? 'displayed' : 'hidden')} style={{height: appHeight, width: framebarWidth, position: 'fixed', top: '0', right: '0' }}>
         <iframe key={1} id="shopframe" style={{border: 'none', width: '100%', height: appHeight - 48, display: 'block' }} width="100%"></iframe>
-        <Button onClick={this.onOpenInTabClick.bind(this)} style={{borderRadius: 0, width: '100%', height: 48}}>
-          <i className="fa fa-publish"></i>
-          Abrir en pestaña
-        </Button>
+        {!window.isMobile ? this.renderIframeToolbarDesktop(props) : this.renderIframeToolbarMobile(props)}
       </div>
-      <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />
-      <IntroOverlay visible={this.state.showIntro} style={{width: framebarWidth, height: appHeight }} />
+      {this.state.showIframe && <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />}
+      {!window.isMobile && <IntroOverlay visible={(this.state.showIntro && this.state.showIframe) ? true : false} style={{width: framebarWidth, height: appHeight }} />}
     </div>)
+  }
+
+  renderIframeToolbarDesktop(props) {
+    return (<Button onClick={this.onOpenInTabClick.bind(this)} style={{borderRadius: 0, width: '100%', height: 48}}>
+      <i className="fa fa-publish"></i>
+      Abrir en pestaña
+    </Button>);
+  }
+
+  renderIframeToolbarMobile(props) {
+    return (<div className="mobile-toolbar-iframe-bottom">
+      <Button onClick={this.hideIframe.bind(this)} className="button-close" style={{borderRadius: 0, width: '20%', height: 48}}>
+        <i className="fa fa-block"></i>
+      </Button>
+      <Button onClick={this.onOpenInTabClick.bind(this)} style={{borderRadius: 0, width: '80%', height: 48}}>
+        <i className="fa fa-publish"></i>
+        Abrir en pestaña
+      </Button>
+    </div>);
   }
 
   onWindowResize(event) {
@@ -104,6 +130,26 @@ class Mercalista extends React.Component {
     this.currentOffer = offer;
   }
 
+  openOfferResource(offer) {
+    this.setIframeOffer(offer)
+
+    let frame = document.getElementById('shopframe');
+    let scope = this;
+
+    this.showFrameLoader();
+
+    // Reeeally dirty way to hide the loading overlay
+    setTimeout(function() {
+      scope.hideFrameLoader();
+    }, 1260);
+
+    if (window.isMobile) {
+      this.setState({showIframe: true});
+    }
+
+    frame.src = offer.agent_url;
+  }
+
   onOpenInTabClick() {
     if (this.currentOffer && this.currentOffer.agent_url) {
       window.open(this.currentOffer.agent_url, '_blank');
@@ -112,11 +158,20 @@ class Mercalista extends React.Component {
   }
 
   showFrameLoader() {
-    this.setState({iframeLoading: true});
+    this.setState({iframeLoading: true, showIntro: false});
   }
 
   hideFrameLoader() {
     this.setState({iframeLoading: false});
+  }
+
+  /**
+   * Hides the iFrame panel, but does so only for mobile view
+   */
+  hideIframe() {
+    if (window.isMobile) {
+      this.setState({showIframe: false});
+    }
   }
 
   onPreferencesClick() {
@@ -126,10 +181,13 @@ class Mercalista extends React.Component {
 
 setTimeout(function() {
   let frame = document.getElementById('shopframe');
-  frame.src = 'about:blank';
 
-  frame.onload = function() {
-    console.log("loaded iframe");
+  if (frame) {
+    frame.src = 'about:blank';
+
+    frame.onload = function() {
+      console.log("loaded iframe");
+    }
   }
 }, 500);
 
