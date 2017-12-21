@@ -146,7 +146,7 @@ export class UserProductList extends React.Component {
 
   renderButtonsMobile(props, selectedTotal) {
     return (<div className="text-center" style={{margin: '50px 15px 0px 15px'}}>
-        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '50px', float: 'left'}}>
+        <button className="btn btn-light btn-lg" onClick={ this.onCollapseAllClick.bind(this) } style={{width: '61px', float: 'left'}}>
           <i className={"fa-resize-small"}></i>
         </button>
 
@@ -155,6 +155,17 @@ export class UserProductList extends React.Component {
         </button>
       </div>
     );
+  }
+
+  renderSettings(entry, num) {
+    return (<div>
+      <label htmlFor="agents">Elige la tienda:</label>
+      <Input type="select" name='agents' onChange={this.onEntryAgentChange.bind(this, entry, num)} value={entry.agent}>
+        <option value="eci">Supermercado El Corte Inglés</option>
+        <option value="crf">Supermercado Carrefour</option>
+        <option value="amz">Amazon</option>
+      </Input>
+    </div>)
   }
 
   renderEntry(entry, num) {
@@ -201,10 +212,17 @@ export class UserProductList extends React.Component {
         onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
       <div className="active-buttons">
+        <button onClick={this.onToggleEntrySettingsClick.bind(this, num)}>
+          <i className={"fa " + (entry.settingsExpanded ? "fa-dot-3" : "fa-dot-3")}></i>
+        </button>
         <button onClick={this.onToggleEntryClick.bind(this, num)}>
           <i className={"fa " + (entry.offersExpanded ? "fa-resize-small" : "fa-resize-full-alt")}></i>
         </button>
       </div>
+
+      { entry.settingsExpanded && <div className="settings-container">
+        { this.renderSettings(entry, num) }
+      </div> }
 
       { entry.offersExpanded && <div className="product-offers">
         <div className="scroll-container" style={{width: '5000%', WebkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
@@ -307,6 +325,14 @@ export class UserProductList extends React.Component {
 
   }
 
+  isMixedList() {
+    if (this.state.entries == null || this.state.entries.lenght == 0)
+      return false;
+
+    let firstAgent = this.state.entries[0].agent;
+    return _.any(this.state.entries, (e) => e.agent != firstAgent);
+  }
+
   pinOffer(entryNum, productData) {
     this.state.entries[entryNum].value = productData.name;
     this.setState(this.state);
@@ -352,7 +378,13 @@ export class UserProductList extends React.Component {
 
     if (!this.state.entries[entryNum].isOfferValid())
       this.state.entries[entryNum].loadResults().then(() => scope.setState(scope.state));
+  }
 
+  onToggleEntrySettingsClick(entryNum, event) {
+    let scope = this;
+
+    this.state.entries[entryNum].settingsExpanded = !this.state.entries[entryNum].settingsExpanded;
+    this.setState(this.state);
   }
 
   onEntryProductClick(entryNum, productData, productNum, event) {
@@ -397,6 +429,11 @@ export class UserProductList extends React.Component {
 
   onAgentSelectionChange(event) {
     this.onAgentSelectionClick(event.target.value, event);
+  }
+
+  onEntryAgentChange(entry, num, event) {
+    entry.agent = event.target.value;
+    this.setState(this.state);
   }
 
   onAgentSelectionClick(agent, event) {

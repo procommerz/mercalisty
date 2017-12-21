@@ -44,8 +44,8 @@ class JsonModel::Offer < JsonModel::Base
     name = node.css('.name-marca a').map(&:text).first
     thumb_url = image_url = node.css('.image img').first.try(:attribute, 'src').try(:value)
     price = node.css('.content-price .price')[0].text.split("\n").last.split(" ")[0].gsub(',', '.').to_f
-    price_per_kilo = node.css('.content-price .desc-product')[0].text.split("\n").last.split(" ").last.gsub(',', '.') + " / Kg o litr."
-    agent_url = "https://www.carrefour.es" + node.css('.image a')[0].attribute('href').value
+    price_per_kilo = node.css('.desc-product').try(:[], 0).try(:text).to_s.split("\n").last.split(" ").last.gsub(',', '.') + " / Kg o litr."
+    agent_url = "https://www.carrefour.es" + node.css('.image a').try(:[], 0).try(:attribute, 'href').try(:value)
     agent_id = node.css('h2.name-product')[0].attribute('id').value.split('-').last
 
     offer = self.new({ name: name,

@@ -26,6 +26,7 @@ class Mercalista extends React.Component {
       showIntro: true,
       showPreferences: false,
       iframeLoading: false,
+      privacyConsent: window.localStorage.privacyConsent,
       showIframe: window.isMobile ? false : true,
     };
 
@@ -98,7 +99,9 @@ class Mercalista extends React.Component {
       </div>
       {this.state.showIframe && <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />}
       {!window.isMobile && <IntroOverlay visible={(this.state.showIntro && this.state.showIframe) ? true : false} style={{width: framebarWidth, height: appHeight }} />}
-    </div>)
+      {this.state.privacyConsent == null && this.renderPrivacyConsent()}
+    </div>
+    )
   }
 
   renderIframeToolbarDesktop(props) {
@@ -118,6 +121,10 @@ class Mercalista extends React.Component {
         Abrir en pestaña
       </Button>
     </div>);
+  }
+
+  renderPrivacyConsent(props) {
+    return (<div></div>)
   }
 
   onWindowResize(event) {
