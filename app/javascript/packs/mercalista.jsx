@@ -99,7 +99,7 @@ class Mercalista extends React.Component {
       </div>
       {this.state.showIframe && <FrameloadingOverlay visible={this.state.iframeLoading} style={{width: framebarWidth, height: appHeight }} />}
       {!window.isMobile && <IntroOverlay visible={(this.state.showIntro && this.state.showIframe) ? true : false} style={{width: framebarWidth, height: appHeight }} />}
-      {this.state.privacyConsent == null && this.renderPrivacyConsent()}
+      {!this.state.privacyConsent && this.renderPrivacyConsent(listviewWidth)}
     </div>
     )
   }
@@ -123,8 +123,16 @@ class Mercalista extends React.Component {
     </div>);
   }
 
-  renderPrivacyConsent(props) {
-    return (<div></div>)
+  renderPrivacyConsent(listviewWidth, props) {
+    return (<div className="privacy-consent-window" style={{width: (window.isMobile ? 'auto' : listviewWidth)}}>
+      <p style={{fontSize: '10px'}}>Se utilizan cookies propias y de terceros para ofrecerle una mejor experiencia y servicio, de acuerdo a sus hábitos de navegación.</p>
+      <Button onClick={this.onPrivacyConsentClick.bind(this)}>De acuerdo</Button>
+    </div>)
+  }
+
+  onPrivacyConsentClick(event) {
+    window.localStorage.privacyConsent = 'true';
+    this.setState({privacyConsent: 'true'});
   }
 
   onWindowResize(event) {

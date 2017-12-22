@@ -42,3 +42,38 @@
   width: 80%;
   padding: 20px;
 }
+
+.privacy-consent-window {
+  font-size: 10px;
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  height: 46px;
+  background: #eeeeee;
+  padding: 7px;
+
+  p {
+    float: left;
+    margin: 0px;
+    margin-bottom: 11px;
+  }
+
+  button {
+    float: right;
+    font-size: 13px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .privacy-consent-window {
+    left: 0;
+    right: 0px;
+    height: 100px;
+    border-top: 1px solid #e1e1e1;
+
+    button {
+      float: none;
+    }
+  }
+}
