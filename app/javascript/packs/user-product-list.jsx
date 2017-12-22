@@ -353,7 +353,9 @@ export class UserProductList extends React.Component {
 
     if (query != null && query.length > 1 && !this.state.entries[entryNum].isOfferValid()) {
       // Load results for the entry
-      this.state.entries[entryNum].agent = this.state.agent;
+      if (this.state.entries[entryNum].agent == null)
+        this.state.entries[entryNum].agent = this.state.agent;
+
       this.state.entries[entryNum].loadResults().then(function(result) {
         let state = scope.state;
         scope.setState(state);
@@ -401,7 +403,7 @@ export class UserProductList extends React.Component {
     if (!window.isMobile && this.entryElements[this.state.currentIndex])
       this.entryElements[this.state.currentIndex].focus();
 
-    if (this.state.agent == 'amz') {
+    if (this.state.entries[entryNum].agent == 'amz') {
       if (this.extWindow == null) {
         this.extWindow = window.open(productData.agent_url, '_blank',
           sprintf('toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=%d, height=%d', this.framebarWidth, window.screen.height));
@@ -432,8 +434,21 @@ export class UserProductList extends React.Component {
   }
 
   onEntryAgentChange(entry, num, event) {
-    entry.agent = event.target.value;
+    let oldAgent = this.state.entries[num].agent;
+    let newAgent = event.target.value;
+
+    this.state.entries[num].agent = newAgent;
+
+    if (oldAgent != newAgent) {
+      this.state.entries[num].settingsExpanded = false;
+    }
+
     this.setState(this.state);
+    this.saveList();
+
+    if (oldAgent != newAgent) {
+      this.onEntryBlur(num);
+    }
   }
 
   onAgentSelectionClick(agent, event) {
@@ -531,13 +546,13 @@ export class UserProductList extends React.Component {
 
     let params = {
       token: this.state.list.token,
-      agents: _.map(this.state.entries, (entry) => scope.state.agent),
+      agents: _.map(this.state.entries, (entry) => entry.agent || scope.state.agent),
       queries: _.map(this.state.entries, (entry) => entry.getValue()),
       focused_offers: _.map(this.state.entries, (entry) => (entry.focusedOfferNum && entry.offers[entry.focusedOfferNum]) ? entry.offers[entry.focusedOfferNum].name : ''),
       results_data: _.map(this.state.entries, (entry) => ({
           query: entry.getValue(),
           offers: _.map(entry.offers, (offer) => ({
-            agent: scope.state.agent,
+            agent: entry.agent || scope.state.agent,
             agent_id: offer.entry_id,
             agent_url: offer.agent_url,
             name: offer.name,
