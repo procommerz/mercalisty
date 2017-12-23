@@ -105,6 +105,27 @@ class JsonModel::Offer < JsonModel::Base
     offer
   end
 
+  def self.from_ula_json(node)
+    product_node = node
+
+    offer = self.new({ name: product_node['name'], agent_id: product_node['id'], agent_url: "https://www.ulabox.com" + product_node['link'],
+                       thumb_url: "https://www.ulabox.com" + product_node['image'], image_url: "https://www.ulabox.com" + product_node['image'] })
+
+    # Price arrives in format of ['1', '99'] for 1.99
+    offer.price = BigDecimal.new(product_node['price'], 2)
+
+    if product_node['old_price']
+      offer.old_price = BigDecimal.new(product_node['old_price'], 2)
+    end
+
+    if product_node['unit'] == 'gr'
+      # TODO: Calculate price per kilo using product_node['qty'] that will be in grams
+      # offer.price_per_kilo = '€ / Kg'
+    end
+
+    offer
+  end
+
   def as_json(param)
     super(param)
   end

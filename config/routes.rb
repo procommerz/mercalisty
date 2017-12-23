@@ -19,6 +19,10 @@ Rails.application.routes.draw do
     namespace :mmk do
       get :search_offers
     end
+
+    namespace :ula do
+      get :search_offers
+    end
   end
 
   resources :search_lists, only: [:update, :create] do

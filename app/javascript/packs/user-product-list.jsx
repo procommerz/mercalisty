@@ -103,6 +103,7 @@ export class UserProductList extends React.Component {
       {this.isMixedList() && <Button onClick={this.onAgentSelectionClick.bind(this, 'mix')} color={this.isMixedList() ? 'info' : 'light'}>MIX</Button>}
       <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={!this.isMixedList() && 'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
       <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={!this.isMixedList() && 'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'ula')} color={!this.isMixedList() && 'ula' == this.state.agent ? 'info' : 'light'}>Ulabox</Button>
       <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={!this.isMixedList() && 'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
       <Button onClick={this.onAgentSelectionClick.bind(this, 'mmk')} color={!this.isMixedList() && 'mmk' == this.state.agent ? 'info' : 'light'}>Mediamarkt</Button>
       <Button onClick={this.onPreferencesClick}>
@@ -121,6 +122,7 @@ export class UserProductList extends React.Component {
         {this.isMixedList() && <option value="mix">MIX</option>}
         <option value="eci">Supermercado El Corte Inglés</option>
         <option value="crf">Supermercado Carrefour</option>
+        <option value="ula">Ulabox</option>
         <option value="amz">Amazon</option>
         <option value="mmk">Mediamarkt</option>
       </Input>
@@ -170,6 +172,7 @@ export class UserProductList extends React.Component {
       <Input type="select" name='agents' onChange={this.onEntryAgentChange.bind(this, entry, num)} value={entry.agent}>
         <option value="eci">Supermercado El Corte Inglés</option>
         <option value="crf">Supermercado Carrefour</option>
+        <option value="ula">Ulabox</option>
         <option value="amz">Amazon</option>
         <option value="mmk">Mediamarkt</option>
       </Input>

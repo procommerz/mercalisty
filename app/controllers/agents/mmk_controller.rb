@@ -37,25 +37,4 @@ class Agents::MmkController < Agents::BaseController
       render json: { exception: e.to_s }
     end
   end
-
-  def process_page(url, pagenum)
-    offers = []
-
-    agent.get(url + "&page=#{pagenum}") { |page|
-      offers = get_offers_from_agent_results(page)
-    }
-
-    offers
-  end
-
-  def agent
-    @agent ||= Mechanize.new { |agent|
-      agent.user_agent_alias = 'Mac Safari'
-      agent.follow_meta_refresh = true
-      # agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    }
-  end
-
-  protected
-
 end
