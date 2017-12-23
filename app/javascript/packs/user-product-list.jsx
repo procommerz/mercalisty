@@ -1,15 +1,16 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { ButtonGroup, Button, InputGroup, Input, InputGroupAddon } from 'reactstrap'
+import React from 'react';
+import PropTypes from 'prop-types';
+import {ButtonGroup, Button, InputGroup, Input, InputGroupAddon} from 'reactstrap';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { ListEntryData } from './list-entry-data'
-import {UserPreferences} from './user-preferences'
-import keydown, { Keys } from 'react-keydown';
+import {ListEntryData} from './list-entry-data';
+import {UserPreferences} from './user-preferences';
+import ReactGesture from 'react-gesture';
+import keydown, {Keys} from 'react-keydown';
 import sprintf from 'sprintf';
 import _ from 'underscore';
 import Loader from 'react-loaders';
 import $ from 'jquery';
-const { ENTER, TAB } = Keys;
+const {ENTER, TAB} = Keys;
 
 export class UserProductList extends React.Component {
   constructor(props) {
@@ -36,7 +37,7 @@ export class UserProductList extends React.Component {
 
     if (window.localSearchList && window.localSearchList.queries && window.localSearchList.queries.length > 0) {
       window.localSearchList.queries.forEach((query, num) => {
-        this.state.entries.push(new ListEntryData({ value: query, agent: window.localSearchList.agents[num] }));
+        this.state.entries.push(new ListEntryData({ value: query, agent: window.localSearchList.agents[num], done: window.localSearchList.done_states[num]  }));
       });
     } else {
       this.state.entries.push(new ListEntryData({ value: location.hostname == 'localhost' ? 'platanos' : '' }));
@@ -63,7 +64,7 @@ export class UserProductList extends React.Component {
   }
 
   render(props) {
-    let searchExample = "Tomates, platanos, agua...";
+    let searchExample = "Tomates, agua, ropa...";
 
     let entries = [];
 
@@ -99,9 +100,10 @@ export class UserProductList extends React.Component {
 
   renderAgentsDesktop(props) {
     return (<ButtonGroup style={{margin: '0px 15px 0px 15px'}}>
-      <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
-      <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
-      <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
+      {this.isMixedList() && <Button onClick={this.onAgentSelectionClick.bind(this, 'mix')} color={this.isMixedList() ? 'info' : 'light'}>MIX</Button>}
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={!this.isMixedList() && 'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={!this.isMixedList() && 'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>
+      <Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={!this.isMixedList() && 'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>
       <Button onClick={this.onPreferencesClick}>
         <i className="fa fa-th-list"></i>
       </Button>
@@ -114,7 +116,8 @@ export class UserProductList extends React.Component {
     {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>*/}
     return (<div className="mobile-toolbar-top">
       <i className="fa fa-down-open select-arrow"></i>
-      <Input type="select" className="agent-select" onChange={this.onAgentSelectionChange.bind(this)} value={this.state.agent}>
+      <Input type="select" className="agent-select" onChange={this.onAgentSelectionChange.bind(this)} value={this.isMixedList() ? 'mix' : this.state.agent}>
+        {this.isMixedList() && <option value="mix">MIX</option>}
         <option value="eci">Supermercado El Corte Inglés</option>
         <option value="crf">Supermercado Carrefour</option>
         <option value="amz">Amazon</option>
@@ -182,6 +185,8 @@ export class UserProductList extends React.Component {
     let productWidth = 180;
     let productResults = [];
 
+    // Offers section (hidden by default)
+
     if (entry.offers && entry.offersExpanded) {
       _.each(entry.offers, (product, productNum) => {
         productResults.push(<div className={["offer-item", (entry.focusedOfferNum == productNum) ? 'active' : ''].join(' ')} key={'offer_' + product.agent_id} onClick={this.onEntryProductClick.bind(this, num, product, productNum)}
@@ -203,39 +208,44 @@ export class UserProductList extends React.Component {
       // console.log(productResults);
     }
 
+    // Entry main body
 
-    return (<li className="entry" key={'entry' + num}>
-      <input type="text" tabIndex={ 50 + num } className="form-control entry-input"
-        placeholder={ entry.placeholder() } ref={(input) => { this.entryElements[num] = input } }
-        style={{color: entry.searchFailed ? '#ff0000' : null }}
-        value={ entry.getValue() }
-        onChange={ this.onEntryChange.bind(this, num) }
-        onBlur={ this.onEntryBlur.bind(this, num) }
-        onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
+    return (<li className={"entry " + (entry.done ? " done" : "") } key={'entry' + num}>
+      <ReactGesture onSwipeLeft={this.onEntrySwipeLeft.bind(this, entry, num)} onSwipeRight={this.onEntrySwipeRight.bind(this, entry, num)}>
+        <div>
+        <input type="text" tabIndex={ 50 + num } className="form-control entry-input"
+          placeholder={ entry.placeholder() } ref={(input) => { this.entryElements[num] = input } }
+          style={{color: entry.searchFailed ? '#ff0000' : null }}
+          value={ entry.getValue() }
+          onChange={ this.onEntryChange.bind(this, num) }
+          onBlur={ this.onEntryBlur.bind(this, num) }
+          onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
-      <div className="active-buttons">
-        <button onClick={this.onToggleEntrySettingsClick.bind(this, num)}>
-          <i className={"fa " + (entry.settingsExpanded ? "fa-dot-3" : "fa-dot-3")}></i>
-        </button>
-        <button onClick={this.onToggleEntryClick.bind(this, num)}>
-          <i className={"fa " + (entry.offersExpanded ? "fa-resize-small" : "fa-resize-full-alt")}></i>
-        </button>
-      </div>
-
-      <ReactCSSTransitionGroup
-        transitionName="entry-settings"
-        transitionEnterTimeout={300}
-        transitionLeaveTimeout={200}>
-        { entry.settingsExpanded && this.renderSettings(entry, num) }
-      </ReactCSSTransitionGroup>
-
-      { entry.offersExpanded && <div className="product-offers">
-        <div className="scroll-container" style={{width: '5000%', WebkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
-          { productResults.length > 0 ? productResults : '' }
-          { !entry.isLoading && productResults.length == 0 && (<span className="no-results">No encontramos ningunos productos :(...</span>) }
+        <div className="active-buttons">
+          <button onClick={this.onToggleEntrySettingsClick.bind(this, num)}>
+            <i className={"fa " + (entry.settingsExpanded ? "fa-dot-3" : "fa-dot-3")}></i>
+          </button>
+          <button onClick={this.onToggleEntryClick.bind(this, num)}>
+            <i className={"fa " + (entry.offersExpanded ? "fa-resize-small" : "fa-resize-full-alt")}></i>
+          </button>
         </div>
-        { entry.isLoading && (window.isMobile ? <img src="/loaders/colorbar.gif" style={{borderRadius: 16, height: 16, width: 104, margin: '5px auto', display: 'block',  border: '3px solid #868e96'}} /> : <div className="text-center"><Loader type="ball-grid-beat" active style={{width: 57, height: 57, margin: '10px auto' }} /></div>)}
-      </div> }
+
+        <ReactCSSTransitionGroup
+          transitionName="entry-settings"
+          transitionEnterTimeout={300}
+          transitionLeaveTimeout={200}>
+          { entry.settingsExpanded && this.renderSettings(entry, num) }
+        </ReactCSSTransitionGroup>
+
+        { entry.offersExpanded && <div className="product-offers">
+          <div className="scroll-container" style={{width: '5000%', WebkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
+            { productResults.length > 0 ? productResults : '' }
+            { !entry.isLoading && productResults.length == 0 && (<span className="no-results">No encontramos ningunos productos :(...</span>) }
+          </div>
+          { entry.isLoading && (window.isMobile ? <img src="/loaders/colorbar.gif" style={{borderRadius: 16, height: 16, width: 104, margin: '5px auto', display: 'block',  border: '3px solid #868e96'}} /> : <div className="text-center"><Loader type="ball-grid-beat" active style={{width: 57, height: 57, margin: '10px auto' }} /></div>)}
+        </div> }
+        </div>
+      </ReactGesture>
     </li>)
   }
 
@@ -461,6 +471,22 @@ export class UserProductList extends React.Component {
     }
   }
 
+  onEntrySwipeLeft(entry, num) {
+    if (entry.done) {
+      entry.done = false;
+      this.setState({entries: this.state.entries});
+      this.saveList();
+    }
+  }
+
+  onEntrySwipeRight(entry, num) {
+    if (!entry.done) {
+      entry.done = true;
+      this.setState({entries: this.state.entries});
+      this.saveList();
+    }
+  }
+
   onAgentSelectionClick(agent, event) {
     let agentWillChange = agent != this.state.agent;
 
@@ -559,6 +585,7 @@ export class UserProductList extends React.Component {
       agents: _.map(this.state.entries, (entry) => entry.agent || scope.state.agent),
       queries: _.map(this.state.entries, (entry) => entry.getValue()),
       focused_offers: _.map(this.state.entries, (entry) => (entry.focusedOfferNum && entry.offers[entry.focusedOfferNum]) ? entry.offers[entry.focusedOfferNum].name : ''),
+      done_states: _.map(this.state.entries, (entry) => entry.done ? true : false),
       results_data: _.map(this.state.entries, (entry) => ({
           query: entry.getValue(),
           offers: _.map(entry.offers, (offer) => ({

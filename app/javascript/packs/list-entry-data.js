@@ -8,6 +8,7 @@ export class ListEntryData {
     this.offers = null;
     this.agent = data.agent || 'crf'; //'eci';
     this.offersLoadedForQuery = null;
+    this.done = data.done || false;
     this.offersExpanded = false;
     this.searchFailed = false;
 

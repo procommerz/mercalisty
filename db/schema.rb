@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214234557) do
+ActiveRecord::Schema.define(version: 20171223165534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,10 @@ ActiveRecord::Schema.define(version: 20171214234557) do
     t.string "zipcode"
     t.jsonb "focused_offers"
     t.string "agents", array: true
+    t.boolean "done_states", array: true
+    t.integer "like_count", default: 0
+    t.integer "remix_count", default: 0
+    t.integer "view_count", default: 0
     t.index ["token"], name: "index_search_lists_on_token"
     t.index ["user_id"], name: "index_search_lists_on_user_id"
   end

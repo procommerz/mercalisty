@@ -95,7 +95,10 @@
       border-color: transparent;
       border-bottom: 1px solid #A1AFA9;
     }
+  }
 
+  li.entry.done .entry-input {
+    text-decoration: line-through;
   }
 
   .product-offers {

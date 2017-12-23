@@ -3,5 +3,8 @@
     token: '<%= @search_list.token %>',
     queries: <%= raw (@search_list.queries || []).to_s %>,
     agents: <%= raw (@search_list.agents || []).to_s %>,
+    done_states: <%= raw (@search_list.done_states || []).to_s %>,
+    like_count: <%= @search_list.like_count %>,
+    view_count: <%= @search_list.view_count %>
   }
 </script>
