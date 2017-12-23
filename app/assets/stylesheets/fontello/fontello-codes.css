@@ -26,3 +26,7 @@
 .fa-dot-2:before { content: '\e818'; } /* '' */
 .fa-cancel-outline:before { content: '\e819'; } /* '' */
 .fa-cancel:before { content: '\e81a'; } /* '' */
+.fa-ok:before { content: '\e81b'; } /* '' */
+.fa-ok-outline:before { content: '\e81c'; } /* '' */
+.fa-phone-outline:before { content: '\e81d'; } /* '' */
+.fa-phone:before { content: '\e81e'; } /* '' */

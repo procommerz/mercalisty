@@ -225,6 +225,9 @@ export class UserProductList extends React.Component {
           onKeyDown={this.onKeyDown} onFocus={this.onEntryFocus.bind(this, num)} />
 
         <div className="active-buttons">
+          { !window.isMobile && <button onClick={this.onToggleEntryDone.bind(this, num)} className={entry.done ? "done" : ""}>
+            <i className={"fa " + (entry.done ? "fa-ok-outline" : "fa-ok")}></i>
+          </button> }
           <button onClick={this.onToggleEntrySettingsClick.bind(this, num)}>
             <i className={"fa " + (entry.settingsExpanded ? "fa-dot-3" : "fa-dot-3")}></i>
           </button>
@@ -410,6 +413,12 @@ export class UserProductList extends React.Component {
 
     this.state.entries[entryNum].settingsExpanded = !this.state.entries[entryNum].settingsExpanded;
     this.setState({entries: this.state.entries });
+  }
+
+  onToggleEntryDone(entryNum, event) {
+    this.state.entries[entryNum].done = !this.state.entries[entryNum].done;
+    this.setState({entries: this.state.entries});
+    this.saveList();
   }
 
   onEntryProductClick(entryNum, productData, productNum, event) {

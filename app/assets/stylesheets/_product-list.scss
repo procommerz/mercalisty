@@ -28,9 +28,17 @@
   li.entry {
     margin-bottom: 10px;
 
-    &:hover .active-buttons button {
-      background: #eeeef2;
-      color: #445a60;
+    &:hover {
+      .active-buttons {
+        button {
+          background: #eeeef2;
+          color: #445a60;
+        }
+
+        .fa-ok {
+          color: #65A145;
+        }
+      }
     }
   }
 
