@@ -61,4 +61,22 @@ body
 
   select.form-control
     width: auto
-    margin-left: 15px
+    margin-left: 0px
+
+  select.agent-select
+    -webkit-appearance: textfield
+    border: none
+    background: transparent
+
+  .select-arrow
+    z-index: 100
+    position: relative
+    left: 10px
+    top: 9px
+    color: #28a745
+    font-weight: bold
+    font-size: 140%
+    transition: color 200ms linear
+
+    &:active, &:hover, &:focus
+      color: #1f7734

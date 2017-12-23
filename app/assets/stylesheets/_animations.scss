@@ -1,0 +1,53 @@
+// Dialog transitions
+
+.ui-dialog-enter {
+  transform: translate3d(0, -120%, 0);
+}
+
+.ui-dialog-enter.ui-dialog-enter-active {
+  transform: translate3d(0, 0, 0);
+  transition: transform 300ms ease-in-out;
+}
+
+.ui-dialog-leave {
+  transform: translate3d(0, 0, 0)
+}
+
+.ui-dialog-leave.ui-dialog-leave-active {
+  transform: translate3d(0, -120%, 0);
+  transition: transform 200ms ease-out;
+}
+
+// Entry settings transitions
+
+.entry-settings-enter {
+  overflow: hidden;
+
+  .slide-container {
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+.entry-settings-enter.entry-settings-enter-active {
+  overflow: hidden;
+
+  .slide-container {
+    transform: translate3d(0, 0, 0);
+    transition: all 300ms ease-in-out;
+  }
+}
+
+.entry-settings-leave {
+  .slide-container {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.entry-settings-leave.entry-settings-leave-active {
+  overflow: hidden;
+
+  .slide-container {
+    transform: translate3d(0, -100%, 0);
+    transition: all 200ms ease-out;
+  }
+}

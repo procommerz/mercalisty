@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { ButtonGroup, Button, InputGroup, Input, InputGroupAddon } from 'reactstrap'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { ListEntryData } from './list-entry-data'
 import {UserPreferences} from './user-preferences'
 import keydown, { Keys } from 'react-keydown';
@@ -112,7 +113,8 @@ export class UserProductList extends React.Component {
     {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>*/}
     {/*<Button onClick={this.onAgentSelectionClick.bind(this, 'amz')} color={'amz' == this.state.agent ? 'info' : 'light'}>Amazon</Button>*/}
     return (<div className="mobile-toolbar-top">
-      <Input type="select" onChange={this.onAgentSelectionChange.bind(this)} value={this.state.agent}>
+      <i className="fa fa-down-open select-arrow"></i>
+      <Input type="select" className="agent-select" onChange={this.onAgentSelectionChange.bind(this)} value={this.state.agent}>
         <option value="eci">Supermercado El Corte Inglés</option>
         <option value="crf">Supermercado Carrefour</option>
         <option value="amz">Amazon</option>
@@ -158,14 +160,14 @@ export class UserProductList extends React.Component {
   }
 
   renderSettings(entry, num) {
-    return (<div>
+    return (<div className="settings-container entry-settings" key={"entry_" + num}><div className="slide-container">
       <label htmlFor="agents">Elige la tienda:</label>
       <Input type="select" name='agents' onChange={this.onEntryAgentChange.bind(this, entry, num)} value={entry.agent}>
         <option value="eci">Supermercado El Corte Inglés</option>
         <option value="crf">Supermercado Carrefour</option>
         <option value="amz">Amazon</option>
       </Input>
-    </div>)
+    </div></div>)
   }
 
   renderEntry(entry, num) {
@@ -220,9 +222,12 @@ export class UserProductList extends React.Component {
         </button>
       </div>
 
-      { entry.settingsExpanded && <div className="settings-container">
-        { this.renderSettings(entry, num) }
-      </div> }
+      <ReactCSSTransitionGroup
+        transitionName="entry-settings"
+        transitionEnterTimeout={300}
+        transitionLeaveTimeout={200}>
+        { entry.settingsExpanded && this.renderSettings(entry, num) }
+      </ReactCSSTransitionGroup>
 
       { entry.offersExpanded && <div className="product-offers">
         <div className="scroll-container" style={{width: '5000%', WebkitOverflowScrolling: 'touch', overflowY: 'visible' }}>
@@ -376,17 +381,21 @@ export class UserProductList extends React.Component {
     let scope = this;
 
     this.state.entries[entryNum].offersExpanded = !this.state.entries[entryNum].offersExpanded;
-    this.setState(this.state);
+    this.setState({entries: this.state.entries});
 
     if (!this.state.entries[entryNum].isOfferValid())
-      this.state.entries[entryNum].loadResults().then(() => scope.setState(scope.state));
+      this.state.entries[entryNum].loadResults().then(() => scope.setState({entries: scope.state.entries}));
   }
 
   onToggleEntrySettingsClick(entryNum, event) {
     let scope = this;
 
+    _.each(this.state.entries, (e, num) => {
+      num != entryNum ? e.settingsExpanded = false : null
+    });
+
     this.state.entries[entryNum].settingsExpanded = !this.state.entries[entryNum].settingsExpanded;
-    this.setState(this.state);
+    this.setState({entries: this.state.entries });
   }
 
   onEntryProductClick(entryNum, productData, productNum, event) {

@@ -1,0 +1,38 @@
+.UserProductList {
+  //
+  // Settings
+  //
+  .settings-container {
+    .slide-container {
+      padding: 7px 5px 5px 5px;
+      border: 2px solid #e1e1e1;
+      //border-radius: 18px;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      background: #fafafa;
+      color: #868e96;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      box-shadow: inset 0 3px 12px rgba(0,0,0,.1);
+    }
+
+    label[for='agents'] {
+      font-size: 12px;
+      margin: 0 14px;
+      //text-shadow: 1px 1px 2px rgba(0,0,0,.2);
+    }
+
+    select, input[type='select'] {
+      border: none;
+      background: #fafafa;
+      color: #868e96;
+      -webkit-appearance: textfield;
+      -moz-appearance: textfield;
+
+      &, &:active, &:focus {
+        outline: none !important;
+      }
+    }
+  }
+}

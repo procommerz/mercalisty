@@ -7,20 +7,26 @@ class Agents::AmzController < Agents::BaseController
     per_page = 14
 
     query = CGI.escape(query)
-    url = "https://www.amazon.es/s/ref=nb_sb_noss_2/257-2604327-1017544?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&url=search-alias%3Daps&field-keywords=#{query}"
+    url = "https://www.amazon.es/s/?url=search-alias%3Daps&field-keywords=#{query}"
+
+    offers = []
 
     begin
-      body = open(url).read
+      offers += process_page(url, 1)
+      sleep(1)
 
-      page = Nokogiri::HTML(body)
-
-      offers = get_offers_from_agent_results(page)
+      begin
+        offers += process_page(url, 2)
+      rescue => e
+        puts e.to_s
+        puts e.backtrace.join("\n")
+      end
 
       render json: {
-          provider: 'crf',
+          provider: 'amz',
+          search_url: url,
           offers: offers
       }
-
     rescue => e
       puts e.to_s
       puts e.backtrace.join("\n")
@@ -29,12 +35,30 @@ class Agents::AmzController < Agents::BaseController
     end
   end
 
+  def process_page(url, pagenum)
+    offers = []
+
+    agent.get(url + "&page=#{pagenum}") { |page|
+      offers = get_offers_from_agent_results(page)
+    }
+
+    offers
+  end
+
+  def agent
+    @agent ||= Mechanize.new { |agent|
+      agent.user_agent_alias = 'Mac Safari'
+      agent.follow_meta_refresh = true
+      # agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    }
+  end
+
   protected
 
   def get_offers_from_agent_results(page)
     offers = []
 
-    item_nodes = page.css('#atfResults .s-result-item')
+    item_nodes = page.css('.s-result-item')
 
     item_nodes.map { |node|
       offers << JsonModel::Offer.from_amz_html_node(node)
