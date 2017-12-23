@@ -20,7 +20,6 @@ class JsonModel::Offer < JsonModel::Base
   end
 
   def self.from_eci_json(params)
-
     product_node = params['product']
 
     offer = self.new({ name: product_node['name'][0], agent_id: product_node['id'][0],
@@ -82,6 +81,26 @@ class JsonModel::Offer < JsonModel::Base
                        thumb_url: thumb_url, image_url: image_url, price: price, price_per_kilo: price_per_kilo,
                        agent_url: agent_url,
                        agent_id: agent_id })
+
+    offer
+  end
+
+  def self.from_mmk_json(node)
+    product_node = node
+
+    offer = self.new({ name: product_node['name'], agent_id: product_node['id'], agent_url: product_node['url'],
+                       thumb_url: product_node['image'], image_url: product_node['image'] })
+
+    # Price arrives in format of ['1', '99'] for 1.99
+    offer.price = BigDecimal.new(product_node['price'])
+
+    # if product_node['price']
+    #   offer.old_price = BigDecimal.new(product_node['price']['original_price'][0] + "." + product_node['price']['original_price'][1])
+    # end
+
+    # offer.agent_url = "https://beta.elcorteingles.es" + product_node['pdp_url']
+    # offer.price_per_kilo = product_node['price']['pum_price'].to_s.gsub('&euro;', '€')
+    # offer.price_per_kilo << '€ / Kg' if offer.price_per_kilo.downcase[/kg|kilo|litr/].nil?
 
     offer
   end

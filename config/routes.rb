@@ -15,6 +15,10 @@ Rails.application.routes.draw do
     namespace :amz do
       get :search_offers
     end
+
+    namespace :mmk do
+      get :search_offers
+    end
   end
 
   resources :search_lists, only: [:update, :create] do
