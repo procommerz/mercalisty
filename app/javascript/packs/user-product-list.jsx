@@ -234,7 +234,7 @@ export class UserProductList extends React.Component {
           { productResults.length > 0 ? productResults : '' }
           { !entry.isLoading && productResults.length == 0 && (<span className="no-results">No encontramos ningunos productos :(...</span>) }
         </div>
-        { entry.isLoading && (<div className="text-center"><Loader type="ball-grid-beat" active style={{width: 57, height: 57, margin: '10px auto' }} /></div>)}
+        { entry.isLoading && (window.isMobile ? <img src="/loaders/colorbar.gif" style={{borderRadius: 16, height: 16, width: 104, margin: '5px auto', display: 'block',  border: '3px solid #868e96'}} /> : <div className="text-center"><Loader type="ball-grid-beat" active style={{width: 57, height: 57, margin: '10px auto' }} /></div>)}
       </div> }
     </li>)
   }
@@ -380,8 +380,9 @@ export class UserProductList extends React.Component {
   onToggleEntryClick(entryNum, event) {
     let scope = this;
 
-    this.state.entries[entryNum].offersExpanded = !this.state.entries[entryNum].offersExpanded;
-    this.setState({entries: this.state.entries});
+    scope.state.entries[entryNum].offersExpanded = !scope.state.entries[entryNum].offersExpanded;
+    this.setState({entries: scope.state.entries});
+    // this.setState((state) => state.entries[entryNum].offersExpanded = !state.entries[entryNum].offersExpanded);
 
     if (!this.state.entries[entryNum].isOfferValid())
       this.state.entries[entryNum].loadResults().then(() => scope.setState({entries: scope.state.entries}));
