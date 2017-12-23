@@ -438,7 +438,8 @@ export class UserProductList extends React.Component {
     if (!window.isMobile && this.entryElements[this.state.currentIndex])
       this.entryElements[this.state.currentIndex].focus();
 
-    if (this.state.entries[entryNum].agent == 'amz') {
+    // Some exceptions for paranoid agents disallowing frames.
+    if (this.state.entries[entryNum].agent == 'amz' || this.state.entries[entryNum].agent == 'ula') {
       if (this.extWindow == null) {
         this.extWindow = window.open(productData.agent_url, '_blank',
           sprintf('toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=%d, height=%d', this.framebarWidth, window.screen.height));
