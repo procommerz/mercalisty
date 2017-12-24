@@ -11,5 +11,11 @@ Agent.AGENTS = {
   },
   'amz': {
     name: 'Amazon'
+  },
+  'ula': {
+    name: 'Ulabox'
+  },
+  'mmk': {
+    name: 'Mediamarkt'
   }
 }
