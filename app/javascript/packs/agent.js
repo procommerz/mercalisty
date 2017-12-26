@@ -17,5 +17,8 @@ Agent.AGENTS = {
   },
   'mmk': {
     name: 'Mediamarkt'
+  },
+  'mix': {
+    name: 'MIX'
   }
 }
