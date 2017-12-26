@@ -276,7 +276,8 @@ export class UserProductList extends React.Component {
         state.currentIndex = this.state.entries.length - 1;
         this.setState(state);
       } else {
-        let newEntry = new ListEntryData();
+        let newEntry = new ListEntryData({ agent: this.state.entries.length > 0 ? this.state.entries[this.state.entries.length - 1].agent : null,
+                                           done: false });
 
         // Add at the end or insert in the middle, depending
         // on cursor position
@@ -375,19 +376,47 @@ export class UserProductList extends React.Component {
     let query = this.state.entries[entryNum].getValue();
     let scope = this;
 
-    if (query != null && query.length > 1 && !this.state.entries[entryNum].isOfferValid()) {
-      // Load results for the entry
-      if (this.state.entries[entryNum].agent == null)
-        this.state.entries[entryNum].agent = this.state.agent;
+    // Process input-by URL, inspecting the URL first and extracting offer name, price and image first
+    if (this.isExternalLink(scope.state.entries[entryNum])) {
+      sendGaEvent('list', 'urlEntered', this.state.entries[entryNum].getValue());
 
-      this.state.entries[entryNum].loadResults().then(function(result) {
-        let state = scope.state;
-        scope.setState(state);
-        scope.saveList();
-      });
+      let params = { link: scope.state.entries[entryNum].getValue() };
 
-      sendGaEvent('list', 'entryUpdated', this.state.entries[entryNum].getValue());
+      // Get link metadata, then update entry and save the list
+      fetch(sprintf("/link_parser/get_search_term.json"), { method: 'POST',  headers: { 'Content-Type':'application/json' }, body: JSON.stringify(params) })
+        .then(result => {
+          result.json().then(data => {
+            // TODO: Transform and modify the entry, based on findings
+            let offerData = data;
+
+            console.log("external offer:", data);
+
+            scope.state.entries[entryNum].value = data.name;
+
+            // Save the list
+            scope.setState({entries: scope.state.entries});
+            scope.saveList();
+
+            sendGaEvent('list', 'entryUpdated', this.state.entries[entryNum].getValue());
+
+          });
+        }).catch((error) => reject(error));
+    } else { // Or save the entry immediately
+      if (query != null && query.length > 1 && !this.state.entries[entryNum].isOfferValid()) {
+        // Load results for the entry
+        if (this.state.entries[entryNum].agent == null)
+          this.state.entries[entryNum].agent = this.state.agent;
+
+        this.state.entries[entryNum].loadResults().then(function(result) {
+          let state = scope.state;
+          scope.setState(state);
+          scope.saveList();
+        });
+
+        sendGaEvent('list', 'entryUpdated', this.state.entries[entryNum].getValue());
+      }
     }
+
   }
 
   onEntryFocus(entryNum, event) {
@@ -654,5 +683,12 @@ export class UserProductList extends React.Component {
   setListLocation() {
     // Set location to reloadable url
     window.history.pushState({"html":"","pageTitle":"Mi lista de compras"},"", sprintf("l/%s", this.state.list.token));
+  }
+
+  isExternalLink(entry) {
+    if (entry.getValue().indexOf('http') == 0) 
+      return true;
+    
+    return false;
   }
 }
