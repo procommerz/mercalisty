@@ -109,7 +109,7 @@ class JsonModel::Offer < JsonModel::Base
     product_node = node
 
     offer = self.new({ name: product_node['name'], agent_id: product_node['id'], agent_url: "https://www.ulabox.com" + product_node['link'],
-                       thumb_url: "https://www.ulabox.com" + product_node['image'], image_url: "https://www.ulabox.com" + product_node['image'] })
+                       thumb_url: "https://www.ulabox.com" + product_node['image'], image_url: (product_node['image'].to_s['ulabox.com'] ? product_node['image'] : ("https://www.ulabox.com" + product_node['image'])) })
 
     # Price arrives in format of ['1', '99'] for 1.99
     offer.price = BigDecimal.new(product_node['price'], 2)
