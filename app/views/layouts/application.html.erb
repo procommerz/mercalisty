@@ -10,6 +10,18 @@
         window.environment = '<%= Rails.env.to_s %>';
 
       window.isMobile = <%= browser.device.mobile? ? 'true' : 'false' %>;
+
+      // Make local user data available to javascript
+      window.currentUser = {
+        id: <%= current_user.try(:id) %>,
+        email: '<%= current_user.try(:email) %>',
+        first_name: '<%= current_user.try(:first_name) %>',
+        last_name: '<%= current_user.try(:last_name) %>'
+      }
+
+      window.routes = {
+        user_google_oauth2_omniauth_authorize: '<%= user_google_oauth2_omniauth_authorize_path %>'
+      }
     </script>
 
     <!-- Google Tag Manager -->

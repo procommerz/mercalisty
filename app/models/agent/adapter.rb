@@ -1,0 +1,3 @@
+module Agent::Adapter
+
+end

@@ -10,15 +10,64 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171223165534) do
+ActiveRecord::Schema.define(version: 20180121212833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "agents", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
+    t.string "site_url"
+    t.string "query_template"
+    t.boolean "synthetic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "jwt_blacklist", force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp", null: false
     t.index ["jti"], name: "index_jwt_blacklist_on_jti"
+  end
+
+  create_table "offer_prices", force: :cascade do |t|
+    t.integer "offer_id"
+    t.string "price_text"
+    t.decimal "price_numeric", precision: 12, scale: 2
+    t.string "stock"
+    t.datetime "updated_at"
+    t.index ["offer_id", "updated_at"], name: "index_offer_prices_on_offer_id_and_updated_at"
+    t.index ["stock"], name: "index_offer_prices_on_stock"
+    t.index ["updated_at"], name: "index_offer_prices_on_updated_at"
+  end
+
+  create_table "offers", force: :cascade do |t|
+    t.integer "agent_id"
+    t.integer "taxon_id"
+    t.string "name"
+    t.string "agent_url"
+    t.string "price_text"
+    t.decimal "price_numeric", precision: 12, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_offers_on_agent_id"
+    t.index ["taxon_id"], name: "index_offers_on_taxon_id"
+  end
+
+  create_table "queries", force: :cascade do |t|
+    t.string "keywords"
+    t.string "tokenized_keywords", array: true
+    t.datetime "created_at"
+    t.index ["keywords"], name: "index_queries_on_keywords"
+    t.index ["tokenized_keywords"], name: "index_queries_on_tokenized_keywords"
+  end
+
+  create_table "queries_offers", force: :cascade do |t|
+    t.integer "query_id"
+    t.integer "offer_id"
+    t.index ["offer_id"], name: "index_queries_offers_on_offer_id"
+    t.index ["query_id"], name: "index_queries_offers_on_query_id"
   end
 
   create_table "search_lists", force: :cascade do |t|
@@ -40,6 +89,14 @@ ActiveRecord::Schema.define(version: 20171223165534) do
     t.index ["user_id"], name: "index_search_lists_on_user_id"
   end
 
+  create_table "taxons", force: :cascade do |t|
+    t.integer "agent_id"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_taxons_on_agent_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -53,6 +110,10 @@ ActiveRecord::Schema.define(version: 20171223165534) do
     t.inet "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "image_url"
+    t.string "profile_url"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

@@ -24,7 +24,8 @@ class Mercalista extends React.Component {
 
     this.state = {
       showIntro: true,
-      showPreferences: false,
+      showPreferences: false, // controls display of the previously touched shopping lists
+      showAuthentication: false, // controls display of the authentication dialog
       iframeLoading: false,
       privacyConsent: window.localStorage.privacyConsent,
       showIframe: window.isMobile ? false : true,
@@ -172,6 +173,10 @@ class Mercalista extends React.Component {
       window.open(this.currentOffer.agent_url, '_blank');
       sendGaEvent('exit', 'openShop', this.currentOffer.agent);
     }
+  }
+
+  showAuthenticationDialog() {
+
   }
 
   showFrameLoader() {

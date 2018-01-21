@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'home#index'
 
@@ -22,6 +22,14 @@ Rails.application.routes.draw do
 
     namespace :ula do
       get :search_offers
+    end
+  end
+
+  namespace :link_parser do
+    post :get_search_term
+
+    if Rails.env.development?
+      get :get_search_term
     end
   end
 

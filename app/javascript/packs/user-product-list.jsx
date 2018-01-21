@@ -100,6 +100,7 @@ export class UserProductList extends React.Component {
 
   renderAgentsDesktop(props) {
     return (<ButtonGroup style={{margin: '0px 15px 0px 15px'}}>
+      <Button onClick={this.mercalista.showAuthenticationDialog.bind(this.mercalista)}><i className="fa fa-user"></i></Button>
       {this.isMixedList() && <Button onClick={this.onAgentSelectionClick.bind(this, 'mix')} color={this.isMixedList() ? 'info' : 'light'}>MIX</Button>}
       <Button onClick={this.onAgentSelectionClick.bind(this, 'eci')} color={!this.isMixedList() && 'eci' == this.state.agent ? 'info' : 'light'}>Supermercado El Corte Inglés</Button>
       <Button onClick={this.onAgentSelectionClick.bind(this, 'crf')} color={!this.isMixedList() && 'crf' == this.state.agent ? 'info' : 'light'}>Supermercado Carrefour</Button>

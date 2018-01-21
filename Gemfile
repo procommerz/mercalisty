@@ -40,8 +40,10 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'devise'
 gem 'devise-jwt'
+gem 'omniauth-google-oauth2'
 
 gem 'safely'
+gem 'phantomjs'
 gem 'mechanize'
 gem 'browser'
 
