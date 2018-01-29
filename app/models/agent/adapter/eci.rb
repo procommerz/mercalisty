@@ -1,5 +1,7 @@
+require 'open-uri'
+
 class Agent::Adapter::Eci < Agent::Adapter::Base
-  def search_offers(keywords, params)
+  def search_offers(keywords, params = {})
     query = keywords.to_s.downcase
     params ||= {}
     zone_id = params[:zone_id] || '010974'
@@ -7,6 +9,8 @@ class Agent::Adapter::Eci < Agent::Adapter::Base
 
     query = CGI.escape(query)
     url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
+
+    will_process(query, url)
 
     body = open(url).read
 

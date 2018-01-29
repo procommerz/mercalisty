@@ -2,25 +2,16 @@ require 'open-uri'
 
 class Agents::EciController < Agents::BaseController
   def search_offers
-    query = params[:query].to_s.downcase
-    zone_id = params[:zone_id] || '010974'
-    per_page = 50
-
-    query = CGI.escape(query)
-    url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
+    agent = Agent::Adapter::Eci.new
 
     begin
-      body = open(url).read
-
-      data = JSON.parse(body)
-
-      offers = get_offers_from_agent_results(data)
+      offers = agent.search_offers(params[:query], params)
 
       render json: {
           provider: 'eci',
+          search_url: agent.search_url,
           offers: offers
       }
-
     rescue => e
       puts e.to_s
       puts e.backtrace.join("\n")
@@ -30,16 +21,4 @@ class Agents::EciController < Agents::BaseController
   end
 
   protected
-
-  def get_offers_from_agent_results(json)
-    offers = []
-
-    if json['catalog_result']['products_list'] and json['catalog_result']['products_list']['items']
-      json['catalog_result']['products_list']['items'].map { |item|
-        offers << JsonModel::Offer.from_eci_json(item)
-      }
-    end
-
-    offers
-  end
 end
