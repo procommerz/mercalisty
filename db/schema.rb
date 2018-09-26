@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180121212833) do
+ActiveRecord::Schema.define(version: 20180729150859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,15 @@ ActiveRecord::Schema.define(version: 20180121212833) do
     t.boolean "synthetic"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "brands", force: :cascade do |t|
+    t.string "name"
+    t.string "name_variations", array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_brands_on_name"
+    t.index ["name_variations"], name: "index_brands_on_name_variations"
   end
 
   create_table "jwt_blacklist", force: :cascade do |t|
@@ -51,8 +60,23 @@ ActiveRecord::Schema.define(version: 20180121212833) do
     t.decimal "price_numeric", precision: 12, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "product_id"
+    t.datetime "expired_on"
+    t.float "quantity_modifier"
     t.index ["agent_id"], name: "index_offers_on_agent_id"
     t.index ["taxon_id"], name: "index_offers_on_taxon_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.string "name_variations", array: true
+    t.string "external_taxon_names", array: true
+    t.integer "brand_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_products_on_brand_id"
+    t.index ["name"], name: "index_products_on_name"
+    t.index ["name_variations"], name: "index_products_on_name_variations"
   end
 
   create_table "queries", force: :cascade do |t|
@@ -85,6 +109,8 @@ ActiveRecord::Schema.define(version: 20180121212833) do
     t.integer "like_count", default: 0
     t.integer "remix_count", default: 0
     t.integer "view_count", default: 0
+    t.integer "product_ids", array: true
+    t.integer "offer_ids", array: true
     t.index ["token"], name: "index_search_lists_on_token"
     t.index ["user_id"], name: "index_search_lists_on_user_id"
   end

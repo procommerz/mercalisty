@@ -8,13 +8,18 @@ class Agent::Adapter::Eci < Agent::Adapter::Base
     per_page = 50
 
     query = CGI.escape(query)
-    url = "https://beta.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
+
+    url = "https://www.elcorteingles.es/alimentacion/api/catalog/supermercado/type_ahead/?question=#{query}&scope=supermarket&center=#{zone_id}&results=#{per_page}"
 
     will_process(query, url)
 
-    body = open(url).read
+    agent = self.agent
+    agent.visit(url)
+    page = agent.text
 
-    json = JSON.parse(body)
+    # body = open(url).read
+    # json = JSON.parse(body)
+    json = JSON.parse(page)
 
     offers = []
 
@@ -25,9 +30,25 @@ class Agent::Adapter::Eci < Agent::Adapter::Base
     end
 
     offers
+  ensure
+    agent.try(:driver).try(:quit) if defined?(agent)
   end
 
   protected
+
+  def agent
+    agent = Capybara::Session.new(:poltergeist)
+    agent.driver.headers = {
+        "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15",
+        "Referer" => "https://www.bloomberg.com/search?query=",
+        "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-language" => "en-US,en;q=0.9,es-ES;q=0.8,es;q=0.7,de;q=0.6",
+        "Cache-control" => "max-age=0",
+        "DNT" => 1,
+        "upgrade-insecure-requests" => 1
+    }
+    agent
+  end
 
   def build_offer(params)
     product_node = params['product']

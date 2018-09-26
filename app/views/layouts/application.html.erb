@@ -13,7 +13,7 @@
 
       // Make local user data available to javascript
       window.currentUser = {
-        id: <%= current_user.try(:id) %>,
+        id: <%= current_user.try(:id) || 'null' %>,
         email: '<%= current_user.try(:email) %>',
         first_name: '<%= current_user.try(:first_name) %>',
         last_name: '<%= current_user.try(:last_name) %>'
