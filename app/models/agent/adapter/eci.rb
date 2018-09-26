@@ -63,7 +63,7 @@ class Agent::Adapter::Eci < Agent::Adapter::Base
       offer.old_price = BigDecimal.new(product_node['price']['original_price'][0] + "." + product_node['price']['original_price'][1])
     end
 
-    offer.agent_url = "https://beta.elcorteingles.es" + product_node['pdp_url']
+    offer.agent_url = "https://www.elcorteingles.es" + product_node['pdp_url']
     offer.price_per_kilo = product_node['price']['pum_price'].to_s.gsub('&euro;', '€')
     offer.price_per_kilo << '€ / Kg' if offer.price_per_kilo.downcase[/kg|kilo|litr/].nil?
 
